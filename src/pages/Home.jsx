@@ -13,7 +13,7 @@ export default function Home({ onPosted }) {
             Les clients te cherchent.<br />
             <span className="gradient-text">Révèle leurs numéros.</span>
           </h1>
-          <p className="text-pro-muted text-lg max-w-2xl mx-auto mb-10">
+          <p className="text-gray-300 text-lg max-w-2xl mx-auto mb-10">
             WAXMA PRO, le marché rapide de Dakar. Les acheteurs postent leurs besoins, tu révèles leurs WhatsApp et tu vends.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -76,7 +76,7 @@ export default function Home({ onPosted }) {
       <section className="py-16 px-4 bg-pro-primary">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl font-black text-white mb-4">Prêt à vendre ?</h2>
-          <p className="text-pro-muted mb-8">Inscris-toi pour {KYC_INSCRIPTION_PRIX}F et commence à contacter les clients.</p>
+          <p className="text-gray-300 mb-8">Inscris-toi pour {KYC_INSCRIPTION_PRIX}F et commence à contacter les clients.</p>
           <a href="#/vendeur" className="inline-block bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold px-10 py-4 rounded-xl hover:shadow-xl transition-all text-lg">
             Commencer maintenant
           </a>

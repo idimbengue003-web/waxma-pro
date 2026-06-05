@@ -50,7 +50,7 @@ export default function DemandForm({ onPosted }) {
         <div className="max-w-sm text-center">
           <div className="text-6xl mb-5">✅</div>
           <h2 className="text-2xl font-black gradient-text mb-3">Demande postée !</h2>
-          <p className="text-pro-muted mb-6">Les vendeurs te contacteront sur WhatsApp.</p>
+          <p className="text-gray-600 mb-6">Les vendeurs te contacteront sur WhatsApp.</p>
           <a href="#/dashboard" className="inline-block bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold px-8 py-3.5 rounded-xl">Voir les demandes</a>
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function DemandForm({ onPosted }) {
       <div className="max-w-lg mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-black gradient-text">Poster une demande</h1>
-          <p className="text-pro-muted mt-2">Décris ce que tu cherches.</p>
+          <p className="text-gray-500 mt-2">Décris ce que tu cherches.</p>
         </div>
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8 space-y-5">
           {error && <div className="bg-red-50 border-2 border-red-300 text-red-700 p-4 rounded-xl text-sm text-center font-medium">{error}</div>}

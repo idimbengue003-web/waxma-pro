@@ -72,8 +72,8 @@ export default function VendeurLogin({ onLogin }) {
       <div className="min-h-[60vh] flex items-center justify-center px-4">
         <div className="max-w-sm text-center">
           <div className="text-7xl mb-5 animate-bounce">🎉</div>
-          <h2 className="text-2xl font-black gradient-text mb-3">Bienvenue Pro !</h2>
-          <p className="text-gray-600 mb-2">{KYC_INSCRIPTION_PRIX}F = {POINTS_KYC.toLocaleString('fr-FR')} Points = {Math.floor(POINTS_KYC / 1500)} révélations test.</p>
+          <h2 className="text-2xl font-black text-white mb-3">Bienvenue Pro !</h2>
+          <p className="text-gray-300 mb-2">{KYC_INSCRIPTION_PRIX}F = {POINTS_KYC.toLocaleString('fr-FR')} Points = {Math.floor(POINTS_KYC / 1500)} révélations test.</p>
           <p className="text-red-600 font-bold text-sm mb-6">Choisis bien. WAXMA ne rembourse PAS les Points.</p>
           <a href="#/dashboard" className="inline-block bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold px-10 py-4 rounded-xl hover:shadow-lg transition">
             💎 Mon Dashboard
@@ -89,8 +89,8 @@ export default function VendeurLogin({ onLogin }) {
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <div className="text-5xl mb-3">📱</div>
-            <h1 className="text-2xl font-black gradient-text">Vérification WhatsApp</h1>
-            <p className="text-gray-500 mt-2">Code envoyé au {phone}</p>
+            <h1 className="text-2xl font-black text-white">Vérification WhatsApp</h1>
+            <p className="text-gray-300 mt-2">Code envoyé au {phone}</p>
           </div>
           <div className="bg-white rounded-2xl shadow-xl p-8 space-y-5">
             {error && <div className="bg-red-50 border-2 border-red-300 text-red-700 p-4 rounded-xl text-sm text-center">{error}</div>}
@@ -123,8 +123,8 @@ export default function VendeurLogin({ onLogin }) {
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <div className="text-5xl mb-3">🟠</div>
-            <h1 className="text-2xl font-black gradient-text">Caution Pro WAXMA</h1>
-            <p className="text-gray-500 mt-2">{KYC_INSCRIPTION_PRIX}F crédités {POINTS_KYC.toLocaleString('fr-FR')} Points</p>
+            <h1 className="text-2xl font-black text-white">Caution Pro WAXMA</h1>
+            <p className="text-gray-300 mt-2">{KYC_INSCRIPTION_PRIX}F crédités {POINTS_KYC.toLocaleString('fr-FR')} Points</p>
           </div>
           <div className="bg-white rounded-2xl shadow-xl p-8 space-y-5">
             <div className="bg-orange-50 border-2 border-orange-300 rounded-xl p-5 text-center">
@@ -149,8 +149,8 @@ export default function VendeurLogin({ onLogin }) {
       <div className="max-w-md mx-auto">
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">🏪</div>
-          <h1 className="text-2xl font-black gradient-text">Espace Vendeur</h1>
-          <p className="text-gray-500 mt-2">Inscris-toi pour révéler les numéros des clients</p>
+          <h1 className="text-2xl font-black text-white">Espace Vendeur</h1>
+          <p className="text-gray-300 mt-2">Inscris-toi pour révéler les numéros des clients</p>
         </div>
         <div className="bg-white rounded-2xl shadow-xl p-8 space-y-5">
           {error && <div className="bg-red-50 border-2 border-red-300 text-red-700 p-4 rounded-xl text-sm text-center">{error}</div>}

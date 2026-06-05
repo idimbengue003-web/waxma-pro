@@ -46,33 +46,33 @@ export default function VendeurDashboard({ onLogout }) {
   if (!vendeur) return null;
 
   return (
-    <div className={isKing ? 'bg-pro-king-dark min-h-screen' : ''}>
+    <div className={isKing ? 'bg-pro-king-dark' : 'bg-pro-primary'}>
       {/* Profile */}
-      <section className={`py-8 px-4 ${isKing ? 'bg-pro-king-gold/10 border-b border-pro-king-gold/20' : 'bg-pro-secondary/50 border-b border-pro-accent/15'}`}>
+      <section className={`py-8 px-4 ${isKing ? 'bg-pro-king-gold/10 border-b border-pro-king-gold/20' : 'bg-pro-secondary border-b border-pro-accent/30'}`}>
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold ${
-                isKing ? 'bg-pro-king-gold text-pro-king-dark' : isDiambar ? 'bg-gradient-to-br from-pro-highlight to-emerald-600 text-white' : 'bg-gray-200 text-gray-500'
+                isKing ? 'bg-pro-king-gold text-pro-king-dark' : isDiambar ? 'bg-gradient-to-br from-pro-highlight to-emerald-600 text-white' : 'bg-pro-accent text-pro-text'
               }`}>{vendeur.nom?.charAt(0)?.toUpperCase() || 'V'}</div>
               <div>
-                <h2 className={`font-bold text-xl ${isKing ? 'text-pro-king-gold' : 'text-pro-text'}`}>
+                <h2 className={`font-bold text-xl ${isKing ? 'text-pro-king-gold' : 'text-white'}`}>
                   {vendeur.nom}{isKing && <span className="ml-2">👑</span>}{isDiambar && <span className="ml-2">⚡</span>}
                 </h2>
-                <p className={`text-sm ${isKing ? 'text-gray-400' : 'text-pro-muted'}`}>{vendeur.numero}</p>
+                <p className={`text-sm ${isKing ? 'text-gray-400' : 'text-gray-300'}`}>{vendeur.numero}</p>
               </div>
             </div>
             <button onClick={() => { localStorage.removeItem('waxma_pro_vendeur'); onLogout?.(); }}
-              className={`text-sm px-5 py-2.5 rounded-xl transition ${isKing ? 'text-gray-400 border border-gray-700' : 'text-pro-muted border border-pro-accent/20'}`}>Déconnexion</button>
+              className={`text-sm px-5 py-2.5 rounded-xl transition ${isKing ? 'text-gray-400 border border-gray-700 hover:bg-gray-800' : 'text-gray-300 border border-pro-accent/40 hover:bg-pro-accent/30'}`}>Déconnexion</button>
           </div>
 
           {/* Points Card */}
-          <div className={`rounded-2xl p-6 mb-5 ${isKing ? 'bg-pro-king-gold/10 border border-pro-king-gold/20' : 'bg-gradient-to-br from-pro-highlight/10 to-pro-blue/10 border border-pro-highlight/20'}`}>
+          <div className={`rounded-2xl p-6 mb-5 ${isKing ? 'bg-pro-king-gold/10 border border-pro-king-gold/20' : 'bg-pro-secondary border border-pro-accent/30'}`}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl ${isKing ? 'bg-pro-king-gold/20' : 'bg-pro-highlight/20'}`}>💎</div>
                 <div>
-                  <p className={`text-xs font-medium ${isKing ? 'text-gray-400' : 'text-pro-muted'}`}>Solde de points</p>
+                  <p className={`text-xs font-medium ${isKing ? 'text-gray-400' : 'text-gray-300'}`}>Solde de points</p>
                   <p className={`text-2xl font-black ${isKing ? 'text-pro-king-gold' : 'text-pro-highlight'}`}>
                     {points.toLocaleString('fr-FR')} <span className="text-sm font-medium">pts</span>
                   </p>
@@ -83,12 +83,12 @@ export default function VendeurDashboard({ onLogout }) {
               }`}>+ Recharger</a>
             </div>
             <div className="flex gap-4">
-              <div className={`flex-1 rounded-xl p-3 text-center ${isKing ? 'bg-gray-800/50' : 'bg-pro-primary/50'}`}>
-                <p className={`text-lg font-bold ${isKing ? 'text-white' : 'text-pro-text'}`}>{revealsFromPoints}</p>
-                <p className={`text-xs ${isKing ? 'text-gray-400' : 'text-pro-muted'}`}>Révélations</p>
+              <div className={`flex-1 rounded-xl p-3 text-center ${isKing ? 'bg-gray-800/50' : 'bg-pro-primary/80'}`}>
+                <p className={`text-lg font-bold ${isKing ? 'text-white' : 'text-white'}`}>{revealsFromPoints}</p>
+                <p className={`text-xs ${isKing ? 'text-gray-400' : 'text-gray-400'}`}>Révélations</p>
               </div>
             </div>
-            <p className={`text-xs mt-3 ${isKing ? 'text-gray-500' : 'text-pro-muted'}`}>
+            <p className={`text-xs mt-3 ${isKing ? 'text-gray-500' : 'text-gray-400'}`}>
               1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : ''} — WAXMA ne rembourse PAS les points.
             </p>
           </div>
@@ -115,10 +115,10 @@ export default function VendeurDashboard({ onLogout }) {
       <section className="py-10 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
-            <h2 className={`text-2xl font-extrabold ${isKing ? 'text-white' : 'gradient-text'}`}>
+            <h2 className={`text-2xl font-extrabold ${isKing ? 'text-white' : 'text-white'}`}>
               {activeTab === 'king-free' ? '👑 Demandes WAXMA FREE' : '📋 Demandes PRO'}
             </h2>
-            <p className={`mt-2 text-sm ${isKing ? 'text-gray-400' : 'text-pro-muted'}`}>
+            <p className={`mt-2 text-sm ${isKing ? 'text-gray-400' : 'text-gray-300'}`}>
               Achète des points pour révéler les numéros WhatsApp des clients.
             </p>
           </div>
@@ -131,12 +131,12 @@ export default function VendeurDashboard({ onLogout }) {
               placeholder="Rechercher..."
               className={`w-full pl-14 pr-5 py-4 rounded-xl border-2 focus:outline-none text-base ${
                 isKing ? 'bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-pro-king-gold'
-                  : 'bg-white border-gray-200 focus:border-pro-highlight'
+                  : 'bg-pro-secondary border-pro-accent/40 text-white placeholder:text-gray-400 focus:border-pro-highlight'
               }`} />
           </div>
 
           <div className="mb-8">
-            <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} />
+            <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} isKing={isKing} />
           </div>
 
           {freeLoading && (
@@ -156,8 +156,8 @@ export default function VendeurDashboard({ onLogout }) {
           ) : !freeLoading && (
             <div className="text-center py-20">
               <div className="text-6xl mb-5">📋</div>
-              <h3 className={`text-xl font-bold mb-3 ${isKing ? 'text-white' : 'text-gray-800'}`}>Aucune demande</h3>
-              <p className={isKing ? 'text-gray-400' : 'text-gray-500'}>Les demandes apparaîtront ici quand des clients posteront.</p>
+              <h3 className={`text-xl font-bold mb-3 ${isKing ? 'text-white' : 'text-white'}`}>Aucune demande</h3>
+              <p className={isKing ? 'text-gray-400' : 'text-gray-300'}>Les demandes apparaîtront ici quand des clients posteront.</p>
             </div>
           )}
         </div>

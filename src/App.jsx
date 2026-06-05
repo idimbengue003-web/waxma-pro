@@ -46,7 +46,7 @@ export default function App() {
 
   return (
     <HelmetProvider>
-      <div className="min-h-screen flex flex-col bg-white">
+      <div className="min-h-screen flex flex-col bg-pro-primary">
         <Helmet>
           <title>WAXMA PRO — Le marché rapide de Dakar</title>
           <meta name="description" content="WAXMA PRO : révèle les numéros WhatsApp des clients à Dakar." />
