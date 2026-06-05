@@ -35,7 +35,7 @@ export default function Home({ onPosted }) {
             {[
               { emoji: '📝', title: '1. Inscris-toi', desc: `${KYC_INSCRIPTION_PRIX}F caution = ${POINTS_KYC.toLocaleString('fr-FR')} Points. Vérification WhatsApp obligatoire.` },
               { emoji: '👀', title: '2. Consulte les demandes', desc: `Les acheteurs postent ce qu'ils cherchent. Filtre par catégorie : ${CATEGORIES_PRO.join(', ')}.` },
-              { emoji: '🔓', title: '3. Révèle & contacte', desc: `${POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts/révélation (KING : ${POINTS_REVEALATION_KING.toLocaleString('fr-FR')} pts 👑). Contacte directement sur WhatsApp.` },
+              { emoji: '🔓', title: '3. Révèle & contacte', desc: `${POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts/révélation (KING : ${POINTS_REVELATION_KING.toLocaleString('fr-FR')} pts 👑). Contacte directement sur WhatsApp.` },
             ].map(step => (
               <div key={step.title} className="bg-white rounded-2xl p-8 text-center shadow-lg card-hover">
                 <div className="text-5xl mb-4">{step.emoji}</div>
@@ -51,7 +51,7 @@ export default function Home({ onPosted }) {
       <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-black text-center text-gray-900 mb-4">Tarifs Recharge</h2>
-          <p className="text-gray-500 text-center mb-10">1 numéro WhatsApp = {POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts (KING : {POINTS_REVEALATION_KING.toLocaleString('fr-FR')} pts)</p>
+          <p className="text-gray-500 text-center mb-10">1 numéro WhatsApp = {POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts (KING : {POINTS_REVELATION_KING.toLocaleString('fr-FR')} pts)</p>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {TARIFS_RECHARGE.map((t, i) => (
               <div key={t.prix} className={`rounded-2xl p-5 text-center border-2 ${i === 2 ? 'border-pro-highlight bg-pro-highlight/5' : i === 4 ? 'border-pro-king-gold bg-pro-king-gold/5' : 'border-gray-200'}`}>
