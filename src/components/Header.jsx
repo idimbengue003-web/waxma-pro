@@ -21,12 +21,12 @@ export default function Header() {
 
   return (
     <header className={`backdrop-blur-md sticky top-0 z-50 border-b shadow-sm ${isKing ? 'bg-white/80 border-yellow-300' : 'bg-white/80 border-gray-200'}`}>
-      <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between gap-8">
-        <div className="flex items-center gap-4">
-          <a href="#/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`font-extrabold text-xl px-5 py-2.5 rounded-xl tracking-tight cursor-pointer transition-shadow ${
+      <div className="max-w-6xl mx-auto px-4 md:px-8 py-3 md:py-4 flex items-center justify-between gap-4 md:gap-8">
+        <div className="flex items-center gap-2 md:gap-4 shrink-0">
+          <a href="#/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`font-extrabold text-lg md:text-xl px-3 md:px-5 py-2 md:py-2.5 rounded-xl tracking-tight cursor-pointer transition-shadow ${
             isKing ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-md shadow-yellow-500/20 hover:shadow-lg hover:shadow-yellow-500/30' : 'bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30'
           }`}>Wakhma</a>
-          <span className={`font-bold text-xs px-3 py-1.5 rounded-lg uppercase tracking-wider ${
+          <span className={`font-bold text-[10px] md:text-xs px-2 md:px-3 py-1 md:py-1.5 rounded-lg uppercase tracking-wider ${
             isKing ? 'text-yellow-600 bg-yellow-50 border border-yellow-200' : 'text-emerald-600 bg-emerald-50 border border-emerald-200'
           }`}>PRO</span>
           {isKing && <span className="text-lg">👑</span>}
@@ -66,16 +66,16 @@ export default function Header() {
         </nav>
 
         {/* Mobile */}
-        <div className="md:hidden flex items-center gap-3">
-          <a href="#/demandes" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
+        <div className="md:hidden flex items-center gap-1.5">
+          <a href="#/demandes" className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-[11px] font-bold ${
             isKing ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-          }`}>📋 Annonces</a>
+          }`}>📋</a>
           {vendeur && (
-            <a href="#/recharge" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
+            <a href="#/recharge" className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-[11px] font-bold ${
               isKing ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-            }`}>💎 {points.toLocaleString('fr-FR')}</a>
+            }`}>💎</a>
           )}
-          <button onClick={() => setMenuOpen(!menuOpen)} className="text-gray-600 p-2">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="text-gray-600 p-1.5">
             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               {menuOpen ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
