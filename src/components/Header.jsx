@@ -35,7 +35,7 @@ export default function Header() {
         {/* Desktop */}
         <nav className="hidden md:flex items-center gap-5">
           <a href="#/" className={`font-medium text-sm ${isKing ? 'text-gray-300 hover:text-pro-king-gold' : 'text-gray-200 hover:text-white'}`}>Accueil</a>
-          <a href="#/demandes" className={`font-medium text-sm ${isKing ? 'text-gray-300 hover:text-pro-king-gold' : 'text-gray-200 hover:text-white'}`}>Demandes</a>
+          <a href="#/demandes" className={`font-medium text-sm ${isKing ? 'text-gray-300 hover:text-pro-king-gold' : 'text-gray-200 hover:text-white'}`}>📋 Annonces</a>
           {vendeur && (
             <a href="#/recharge" className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition ${
               isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border border-pro-king-gold/20' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
@@ -67,6 +67,9 @@ export default function Header() {
 
         {/* Mobile */}
         <div className="md:hidden flex items-center gap-3">
+          <a href="#/demandes" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
+            isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border border-pro-king-gold/20' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
+          }`}>📋 Annonces</a>
           {vendeur && (
             <a href="#/recharge" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
               isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border border-pro-king-gold/20' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
@@ -91,8 +94,8 @@ export default function Header() {
       {menuOpen && (
         <div className={`md:hidden border-t animate-fade-in-up ${isKing ? 'bg-pro-king-dark border-gray-800' : 'bg-pro-primary border-pro-accent/20'}`}>
           <nav className="flex flex-col p-6 gap-3">
-            <a href="#/" onClick={() => setMenuOpen(false)} className={`font-medium py-3 px-5 rounded-xl text-sm ${isKing ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-200 hover:bg-pro-accent/20'}`}>Accueil</a>
-            <a href="#/demandes" onClick={() => setMenuOpen(false)} className={`font-medium py-3 px-5 rounded-xl text-sm ${isKing ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-200 hover:bg-pro-accent/20'}`}>Demandes</a>
+            <a href="#/" onClick={() => setMenuOpen(false)} className={`font-medium py-3 px-5 rounded-xl text-sm ${isKing ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-200 hover:bg-pro-accent/20'}`}>🏠 Accueil</a>
+            <a href="#/demandes" onClick={() => setMenuOpen(false)} className={`font-medium py-3 px-5 rounded-xl text-sm ${isKing ? 'text-gray-300 hover:bg-gray-900' : 'text-gray-200 hover:bg-pro-accent/20'}`}>📋 Annonces</a>
 
             {vendeur && (
               <div className={`rounded-xl p-4 mt-1 ${isKing ? 'bg-pro-king-gold/10 border border-pro-king-gold/20' : 'bg-pro-secondary border border-pro-accent/30'}`}>
@@ -117,9 +120,9 @@ export default function Header() {
             )}
 
             {vendeur ? (
-              <a href="#/dashboard" onClick={() => setMenuOpen(false)} className="bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold py-3.5 px-5 rounded-xl text-center text-sm">Dashboard</a>
+              <a href="#/dashboard" onClick={() => setMenuOpen(false)} className="bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold py-3.5 px-5 rounded-xl text-center text-sm">📊 Dashboard</a>
             ) : (
-              <a href="#/vendeur" onClick={() => setMenuOpen(false)} className="bg-gradient-to-r from-pro-blue to-blue-600 text-white font-bold py-3.5 px-5 rounded-xl text-center text-sm">Espace Vendeur</a>
+              <a href="#/vendeur" onClick={() => setMenuOpen(false)} className="bg-gradient-to-r from-pro-blue to-blue-600 text-white font-bold py-3.5 px-5 rounded-xl text-center text-sm">🏪 Espace Vendeur</a>
             )}
 
             {showAdmin ? (
