@@ -62,7 +62,7 @@ export default function App() {
 
   return (
     <HelmetProvider>
-      <div className="min-h-screen flex flex-col bg-pro-primary">
+      <div className="min-h-screen flex flex-col bg-white">
         <Helmet>
           <title>Wakhma PRO — Le marché rapide de Dakar</title>
           <meta name="description" content="Wakhma PRO : révèle les numéros WhatsApp des clients à Dakar." />
