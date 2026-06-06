@@ -1,7 +1,7 @@
 import { CATEGORIES_PRO } from '../utils/storage';
 
-export default function CategoryFilter({ selected, onChange, isKing, isDiambar }) {
-  const cats = ['Toutes', ...CATEGORIES_PRO];
+export default function CategoryFilter({ selected, onChange, isKing, isDiambar, categories }) {
+  const cats = ['Toutes', ...(categories || CATEGORIES_PRO)];
   return (
     <div className="flex gap-3 overflow-x-auto pb-2">
       {cats.map(cat => (

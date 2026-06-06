@@ -1,9 +1,24 @@
 import { useState, useEffect } from 'react';
 import DemandCard from '../components/DemandCard';
 import CategoryFilter from '../components/CategoryFilter';
-import { getVendeur, getDemandsLocal, getPoints, getRevealsFromPoints, getRevealCost, FREE_URL, POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING } from '../utils/storage';
+import {
+  getVendeur, getDemandsLocal, getPoints, getRevealsFromPoints, getRevealCost,
+  FREE_URL, POINTS_PAR_REVELATION, checkSubscriptionExpiry, getSubscriptionRemainingDays,
+  CATEGORIES_PRO, ABONNEMENT_DURATION_DAYS
+} from '../utils/storage';
+
+// FREE site categories (needed when viewing FREE demands)
+const CATEGORIES_FREE = [
+  'Téléphones', 'TV & Écrans', 'Frigo & Congélateur', 'Climatiseur & Ventilateur',
+  'Ordinateurs', 'Tablettes', 'Audio & Son', 'Électroménager', 'Plomberie',
+  'Électricité', 'Meubles', 'Mode & Vetements', 'Cosmétiques', 'Alimentation',
+  'Services', 'Transport', 'Immobilier', 'Autre',
+];
 
 export default function VendeurDashboard({ onLogout }) {
+  // Check subscription expiry on load
+  checkSubscriptionExpiry();
+
   const vendeur = getVendeur();
   const isKing = vendeur?.role === 'king';
   const isDiambar = vendeur?.role === 'diambar';
@@ -18,6 +33,7 @@ export default function VendeurDashboard({ onLogout }) {
   const [proLoading, setProLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [contactRefresh, setContactRefresh] = useState(0);
+  const [expiredNotice, setExpiredNotice] = useState(false);
 
   const phone = vendeur?.numero || '';
   const role = vendeur?.role || 'free';
@@ -26,6 +42,13 @@ export default function VendeurDashboard({ onLogout }) {
   const revealsFromPoints = getRevealsFromPoints(phone, role);
   const normalCost = POINTS_PAR_REVELATION;
   const saving = normalCost - revealCost;
+  const remainingDays = getSubscriptionRemainingDays();
+
+  // Handle tab switch — reset category when switching
+  const handleTabSwitch = (tab) => {
+    setActiveTab(tab);
+    setSelectedCategory('Toutes');
+  };
 
   // Fetch FREE demands for KING
   useEffect(() => {
@@ -61,12 +84,25 @@ export default function VendeurDashboard({ onLogout }) {
     return matchSearch && matchCat && d.status !== 'rejected';
   });
 
+  // Determine which categories to show based on active tab
+  const activeCategories = activeTab === 'king-free' ? CATEGORIES_FREE : CATEGORIES_PRO;
+
   const handleContacted = () => setContactRefresh(prev => prev + 1);
 
   if (!vendeur) return null;
 
   return (
     <div className={isKing ? 'bg-pro-king-dark' : 'bg-pro-primary'}>
+      {/* Expired subscription notice */}
+      {isFree && (
+        <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border-b border-orange-500/30 py-3 px-4 text-center">
+          <p className="text-sm font-bold text-orange-300">
+            ⚠️ Abonnement expiré — 1 numéro = {POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts (tarif standard)
+          </p>
+          <a href="#/recharge" className="text-xs font-bold text-white underline ml-2">Renouveler →</a>
+        </div>
+      )}
+
       {/* Profile */}
       <section className={`py-8 px-4 ${isKing ? 'bg-pro-king-gold/10 border-b border-pro-king-gold/20' : isDiambar ? 'bg-blue-500/10 border-b border-blue-500/20' : 'bg-pro-secondary border-b border-pro-accent/30'}`}>
         <div className="max-w-6xl mx-auto">
@@ -83,12 +119,21 @@ export default function VendeurDashboard({ onLogout }) {
                 </h2>
                 <p className={`text-sm ${isKing ? 'text-gray-400' : 'text-gray-300'}`}>{vendeur.numero}</p>
                 {isPremium && (
-                  <span className={`inline-block text-xs font-bold px-3 py-1 rounded-lg mt-1 ${
-                    isKing ? 'bg-pro-king-gold/20 text-pro-king-gold border border-pro-king-gold/30'
-                      : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                  }`}>
-                    {isKing ? '👑 KING VIP' : '⚡ Diambar'}
-                  </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={`inline-block text-xs font-bold px-3 py-1 rounded-lg ${
+                      isKing ? 'bg-pro-king-gold/20 text-pro-king-gold border border-pro-king-gold/30'
+                        : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                    }`}>
+                      {isKing ? '👑 KING VIP' : '⚡ Diambar'}
+                    </span>
+                    {remainingDays > 0 && (
+                      <span className={`text-[10px] font-medium ${
+                        remainingDays <= 5 ? 'text-red-400' : isKing ? 'text-gray-500' : 'text-gray-400'
+                      }`}>
+                        {remainingDays}j restants
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -126,7 +171,7 @@ export default function VendeurDashboard({ onLogout }) {
             </div>
             <p className={`text-xs mt-3 ${isKing ? 'text-gray-500' : 'text-gray-400'}`}>
               1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts
-              {isKing ? ' (tarif KING 👑)' : isDiambar ? ' (tarif Diambar ⚡)' : ''}
+              {isKing ? ' (tarif KING 👑)' : isDiambar ? ' (tarif Diambar ⚡)' : ' (tarif standard)'}
               {' — '}Wakhma ne rembourse PAS les points.
             </p>
 
@@ -148,11 +193,11 @@ export default function VendeurDashboard({ onLogout }) {
       {isKing && (
         <div className="bg-pro-king-dark border-b border-gray-800 px-6 py-4">
           <div className="max-w-6xl mx-auto flex gap-3">
-            <button onClick={() => setActiveTab('pro')}
+            <button onClick={() => handleTabSwitch('pro')}
               className={`flex-1 py-3 px-6 text-sm font-bold rounded-xl transition ${activeTab === 'pro' ? 'bg-pro-king-gold/15 text-pro-king-gold border border-pro-king-gold/30' : 'text-gray-500 border border-transparent'}`}>
               📋 Demandes PRO
             </button>
-            <button onClick={() => setActiveTab('king-free')}
+            <button onClick={() => handleTabSwitch('king-free')}
               className={`flex-1 py-3 px-6 text-sm font-bold rounded-xl transition ${activeTab === 'king-free' ? 'bg-pro-king-gold/15 text-pro-king-gold border border-pro-king-gold/30' : 'text-gray-500 border border-transparent'}`}>
               👑 Demandes FREE
             </button>
@@ -168,7 +213,10 @@ export default function VendeurDashboard({ onLogout }) {
               {activeTab === 'king-free' ? '👑 Demandes Wakhma FREE' : '📋 Demandes PRO'}
             </h2>
             <p className={`mt-2 text-sm ${isKing ? 'text-gray-400' : 'text-gray-300'}`}>
-              Achète des points pour révéler les numéros WhatsApp des clients.
+              {activeTab === 'king-free'
+                ? 'Annonces postées par les acheteurs sur Wakhma FREE. Révèle leurs numéros WhatsApp !'
+                : 'Achète des points pour révéler les numéros WhatsApp des clients.'
+              }
             </p>
           </div>
 
@@ -186,7 +234,13 @@ export default function VendeurDashboard({ onLogout }) {
           </div>
 
           <div className="mb-8">
-            <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} isKing={isKing} isDiambar={isDiambar} />
+            <CategoryFilter
+              selected={selectedCategory}
+              onChange={setSelectedCategory}
+              isKing={isKing}
+              isDiambar={isDiambar}
+              categories={activeCategories}
+            />
           </div>
 
           {freeLoading && (
@@ -200,14 +254,20 @@ export default function VendeurDashboard({ onLogout }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map(d => (
                 <DemandCard key={d.id} demand={d} isKing={isKing} isDiambar={isDiambar} isFree={isFree}
-                  vendeurPhone={phone} vendeurRole={role} onContacted={handleContacted} />
+                  vendeurPhone={phone} vendeurRole={role} onContacted={handleContacted}
+                  source={activeTab} />
               ))}
             </div>
           ) : !freeLoading && (
             <div className="text-center py-20">
               <div className="text-6xl mb-5">📋</div>
               <h3 className="text-xl font-bold text-white">Aucune demande</h3>
-              <p className="text-gray-300">Les demandes apparaîtront ici quand des clients posteront.</p>
+              <p className="text-gray-300">
+                {activeTab === 'king-free'
+                  ? 'Les demandes FREE apparaîtront ici. Vérifie que le site FREE est bien en ligne.'
+                  : 'Les demandes apparaîtront ici quand des clients posteront.'
+                }
+              </p>
             </div>
           )}
         </div>

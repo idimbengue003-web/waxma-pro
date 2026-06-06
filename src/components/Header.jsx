@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { getVendeur, getPoints, getRevealsFromPoints, getRevealCost, getAuthUser, isSiteAdmin, logoutSiteAdmin, POINTS_PAR_REVELATION, POINTS_REVELATION_KING } from '../utils/storage';
+import { getVendeur, getPoints, getRevealsFromPoints, getRevealCost, getAuthUser, isSiteAdmin, logoutSiteAdmin, checkSubscriptionExpiry, getSubscriptionRemainingDays, POINTS_PAR_REVELATION, POINTS_REVELATION_KING } from '../utils/storage';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  // Check subscription expiry on load
+  checkSubscriptionExpiry();
   const vendeur = getVendeur();
   const isKing = vendeur?.role === 'king';
+  const remainingDays = getSubscriptionRemainingDays();
   const authUser = getAuthUser();
   const showAdmin = authUser && authUser.role === 'admin';
 
@@ -88,6 +91,9 @@ export default function Header() {
         isKing ? 'bg-gradient-to-r from-yellow-50 to-yellow-100/50 text-yellow-600 border-yellow-200/50' : 'bg-gradient-to-r from-emerald-50 to-emerald-100/50 text-emerald-600 border-emerald-200/50'
       }`}>
         {isKing && '👑 KING — '}
+        {vendeur && remainingDays > 0 && remainingDays <= 5 && (
+          <span className="text-red-500 font-bold mr-2">⏳ {remainingDays}j restants — </span>
+        )}
         Le marché rapide de Dakar
       </div>
 

@@ -9,6 +9,7 @@ export const KYC_INSCRIPTION_PRIX = 300;
 export const POINTS_KYC = 3000;
 export const DEMAND_LIMIT_PER_WEEK = 3;
 export const FREE_URL = 'https://wakhma-store.com';
+export const ABONNEMENT_DURATION_DAYS = 30; // Subscription lasts 30 days
 
 export const CATEGORIES_PRO = ["Téléphones", "TV Frigo Congélateur", "Clim Ventilateur"];
 
@@ -76,14 +77,29 @@ export function logoutVendeur() {
 
 export function updateVendeurRole(phone, newRole) {
   const v = getVendeur();
+  const now = new Date().toISOString();
   if (v && v.numero === phone) {
     v.role = newRole;
+    // Record subscription date when upgrading to premium
+    if (newRole === 'diambar' || newRole === 'king') {
+      v.subscription_date = now;
+    } else {
+      v.subscription_date = null;
+    }
     setVendeur(v);
   }
   // Also update vendeurs list
   const vendeurs = JSON.parse(localStorage.getItem('wakhma_pro_vendeurs') || '[]');
   const idx = vendeurs.findIndex(vv => vv.numero === phone);
-  if (idx >= 0) { vendeurs[idx].role = newRole; localStorage.setItem('wakhma_pro_vendeurs', JSON.stringify(vendeurs)); }
+  if (idx >= 0) {
+    vendeurs[idx].role = newRole;
+    if (newRole === 'diambar' || newRole === 'king') {
+      vendeurs[idx].subscription_date = now;
+    } else {
+      vendeurs[idx].subscription_date = null;
+    }
+    localStorage.setItem('wakhma_pro_vendeurs', JSON.stringify(vendeurs));
+  }
 }
 
 // ── Points ──
@@ -208,6 +224,61 @@ export function generateId() {
 
 export function generateRef() {
   return 'WKH-' + Date.now().toString(36).toUpperCase();
+}
+
+// ── Subscription Expiry Check ──
+export function checkSubscriptionExpiry() {
+  const v = getVendeur();
+  if (!v) return false;
+
+  // Only check for premium roles
+  if (v.role !== 'diambar' && v.role !== 'king') return false;
+
+  // If no subscription date, treat as expired
+  if (!v.subscription_date) {
+    // Legacy user without date — set now so they get 30 days from now
+    v.subscription_date = new Date().toISOString();
+    setVendeur(v);
+    return true;
+  }
+
+  const subDate = new Date(v.subscription_date);
+  const expiryDate = new Date(subDate.getTime() + ABONNEMENT_DURATION_DAYS * 24 * 60 * 60 * 1000);
+  const now = new Date();
+
+  if (now >= expiryDate) {
+    // Subscription expired — revert to free but keep points
+    const oldRole = v.role;
+    v.role = 'free';
+    v.subscription_date = null;
+    setVendeur(v);
+
+    // Also update vendeurs list
+    const vendeurs = JSON.parse(localStorage.getItem('wakhma_pro_vendeurs') || '[]');
+    const idx = vendeurs.findIndex(vv => vv.numero === v.numero);
+    if (idx >= 0) {
+      vendeurs[idx].role = 'free';
+      vendeurs[idx].subscription_date = null;
+      localStorage.setItem('wakhma_pro_vendeurs', JSON.stringify(vendeurs));
+    }
+
+    return false; // expired
+  }
+
+  return true; // still active
+}
+
+// Get remaining days of subscription
+export function getSubscriptionRemainingDays() {
+  const v = getVendeur();
+  if (!v || (v.role !== 'diambar' && v.role !== 'king')) return 0;
+  if (!v.subscription_date) return 0;
+
+  const subDate = new Date(v.subscription_date);
+  const expiryDate = new Date(subDate.getTime() + ABONNEMENT_DURATION_DAYS * 24 * 60 * 60 * 1000);
+  const now = new Date();
+  const remaining = Math.ceil((expiryDate - now) / (24 * 60 * 60 * 1000));
+  return Math.max(0, remaining);
 }
 
 // ── Auth & Roles (Admin access) ──

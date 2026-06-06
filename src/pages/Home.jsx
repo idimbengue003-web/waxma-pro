@@ -1,4 +1,4 @@
-import { TARIFS_RECHARGE, CATEGORIES_PRO, POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING, KYC_INSCRIPTION_PRIX, POINTS_KYC, ABONNEMENTS } from '../utils/storage';
+import { TARIFS_RECHARGE, CATEGORIES_PRO, POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING, KYC_INSCRIPTION_PRIX, POINTS_KYC, ABONNEMENTS, ABONNEMENT_DURATION_DAYS } from '../utils/storage';
 
 export default function Home({ onPosted }) {
   return (
@@ -68,7 +68,7 @@ export default function Home({ onPosted }) {
                     </li>
                   ))}
                 </ul>
-                <p className="text-center text-xs text-gray-400">+ {ab.points.toLocaleString('fr-FR')} pts inclus</p>
+                <p className="text-center text-xs text-gray-400">+ {ab.points.toLocaleString('fr-FR')} pts inclus — {ABONNEMENT_DURATION_DAYS} jours</p>
               </div>
             ))}
           </div>

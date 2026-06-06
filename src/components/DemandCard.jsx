@@ -5,7 +5,7 @@ import {
   POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING,
 } from '../utils/storage';
 
-export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurPhone, vendeurRole, onContacted }) {
+export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurPhone, vendeurRole, onContacted, source }) {
   const [revealed, setRevealed] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -16,14 +16,15 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
   const revealsFromPoints = Math.floor(points / revealCost);
   const canDoReveal = points >= revealCost;
 
-  // Build WhatsApp message with VIP badge
+  // Build WhatsApp message with VIP badge and special star
   const vendeur = getVendeur();
   const vendeurName = vendeur?.nom || '';
-  const vipBadge = isKing ? '★ KING VIP Wakhma ★' : isDiambar ? '★ Diambar Wakhma ★' : '';
+  const isFreeSource = source === 'king-free';
+
   const waMessage = isKing
-    ? `★ KING VIP Wakhma ★\nBonjour ! Je suis ${vendeurName}, vendeur certifié KING VIP sur Wakhma PRO 👑\n\nJ'ai vu ta demande : "${demand.title}"\nJe peux te proposer quelque chose !`
+    ? `⭐ KING VIP Wakhma ⭐\nBonjour ! Je suis ${vendeurName} 👑, vendeur certifié KING VIP sur Wakhma PRO.\n\nJ'ai vu ta demande : "${demand.title}"\nJe peux te proposer quelque chose !`
     : isDiambar
-    ? `★ Diambar Wakhma ★\nBonjour ! Je suis ${vendeurName}, vendeur Diambar sur Wakhma PRO ⚡\n\nJ'ai vu ta demande : "${demand.title}"\nJe peux te proposer quelque chose !`
+    ? `⚡ Diambar Wakhma ⚡\nBonjour ! Je suis ${vendeurName}, vendeur Diambar sur Wakhma PRO.\n\nJ'ai vu ta demande : "${demand.title}"\nJe peux te proposer quelque chose !`
     : `Bonjour ! J'ai vu ta demande sur Wakhma PRO : "${demand.title}". Je peux te proposer quelque chose !`;
 
   const waLink = getWhatsAppLink(demand.whatsapp, waMessage);
@@ -43,6 +44,17 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
     : isDiambar ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
     : 'bg-gradient-to-r from-pro-highlight to-emerald-600 text-white';
 
+  // VIP star component for name display
+  const VipStar = () => {
+    if (isKing) {
+      return <span className="inline-flex items-center gap-1 ml-1 text-xs font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-2 py-0.5 rounded-full shadow-sm">⭐ KING</span>;
+    }
+    if (isDiambar) {
+      return <span className="inline-flex items-center gap-1 ml-1 text-xs font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-white px-2 py-0.5 rounded-full shadow-sm">⚡</span>;
+    }
+    return null;
+  };
+
   return (
     <>
       <article className={`bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in-up card-hover ${
@@ -54,14 +66,23 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
             <span className={`absolute top-3 left-3 text-white text-xs font-bold px-3 py-1 rounded-lg ${
               isKing ? 'bg-pro-king-gold text-pro-king-dark' : isDiambar ? 'bg-blue-500 text-white' : 'bg-pro-highlight'
             }`}>{demand.category}</span>
+            {/* FREE source badge */}
+            {isFreeSource && (
+              <span className="absolute top-3 right-3 text-xs font-bold px-2 py-1 rounded-lg bg-emerald-500 text-white">FREE</span>
+            )}
           </div>
         )}
 
         <div className="p-5">
           {!demand.photo && (
-            <span className={`inline-block text-xs font-bold px-3 py-1 rounded-lg mb-3 ${
-              isKing ? 'bg-pro-king-gold/20 text-pro-king-dark' : isDiambar ? 'bg-blue-500/10 text-blue-600 border border-blue-500/20' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
-            }`}>{demand.category}</span>
+            <div className="flex items-center gap-2 mb-3">
+              <span className={`inline-block text-xs font-bold px-3 py-1 rounded-lg ${
+                isKing ? 'bg-pro-king-gold/20 text-pro-king-dark' : isDiambar ? 'bg-blue-500/10 text-blue-600 border border-blue-500/20' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
+              }`}>{demand.category}</span>
+              {isFreeSource && (
+                <span className="text-xs font-bold px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">FREE</span>
+              )}
+            </div>
           )}
 
           <h3 className="text-lg font-bold text-gray-900 leading-tight mb-2">{demand.title}</h3>
@@ -70,6 +91,13 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
             <span className="text-gray-400 text-xs">{timeAgo(demand.createdAt)}</span>
             {demand.quartier && (
               <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-pro-highlight/10 text-pro-highlight">📍 {demand.quartier}</span>
+            )}
+            {demand.urgency && demand.urgency !== 'flexible' && (
+              <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
+                demand.urgency === 'urgent' ? 'bg-red-500/10 text-red-600' : 'bg-orange-500/10 text-orange-600'
+              }`}>
+                {demand.urgency === 'urgent' ? '🔥 Urgent' : demand.urgency === '2jours' ? '⏳ 2j' : demand.urgency === '1semaine' ? '📅 1 sem' : ''}
+              </span>
             )}
           </div>
 
@@ -85,6 +113,17 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
           {/* Reveal Zone */}
           {revealed ? (
             <div className="space-y-3">
+              {/* VIP Star Name Display */}
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-gradient-to-r from-gray-50 to-white border border-gray-200">
+                <span className="text-lg">{isKing ? '👑' : isDiambar ? '⚡' : '👤'}</span>
+                <div>
+                  <div className="flex items-center">
+                    <span className="font-bold text-gray-800 text-sm">{vendeurName}</span>
+                    <VipStar />
+                  </div>
+                  <span className="text-xs text-gray-400">Contacté via Wakhma PRO</span>
+                </div>
+              </div>
               <div className="p-4 rounded-xl text-center bg-pro-highlight/10 border border-pro-highlight/20">
                 <p className="text-xs text-gray-500 mb-1">Révélé avec {revealCost.toLocaleString('fr-FR')} pts {roleTarif}</p>
                 <p className="text-lg font-bold text-green-600">{demand.whatsapp}</p>
@@ -150,6 +189,12 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
                 <span className="text-gray-500">Posté il y a</span>
                 <span className="font-bold text-gray-800">{timeAgo(demand.createdAt)}</span>
               </div>
+              {isFreeSource && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Source</span>
+                  <span className="font-bold text-emerald-600">Wakhma FREE</span>
+                </div>
+              )}
               <div className="border-t border-gray-200 pt-2 mt-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Solde actuel</span>
@@ -161,6 +206,19 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
                 </div>
               </div>
             </div>
+
+            {/* VIP Star preview */}
+            {(isKing || isDiambar) && (
+              <div className="bg-gradient-to-r from-yellow-50 to-blue-50 rounded-xl p-3 mb-4 flex items-center gap-2">
+                <span className="text-lg">{isKing ? '👑' : '⚡'}</span>
+                <div>
+                  <p className="text-xs font-bold text-gray-700">
+                    {vendeurName} <VipStar />
+                  </p>
+                  <p className="text-[10px] text-gray-500">Ainsi la personne saura que tu es VIP</p>
+                </div>
+              </div>
+            )}
 
             <div className="bg-red-50 border-2 border-red-200 rounded-xl p-3 mb-5">
               <p className="text-xs font-bold text-red-700 leading-relaxed">

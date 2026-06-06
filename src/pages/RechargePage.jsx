@@ -1,7 +1,15 @@
 import { useState } from 'react';
-import { getVendeur, getPoints, addPoints, TARIFS_RECHARGE, ABONNEMENTS, getRevealsFromPoints, getRevealCost, generateRef, updateVendeurRole, POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING } from '../utils/storage';
+import {
+  getVendeur, getPoints, addPoints, TARIFS_RECHARGE, ABONNEMENTS,
+  getRevealsFromPoints, getRevealCost, generateRef, updateVendeurRole,
+  checkSubscriptionExpiry, getSubscriptionRemainingDays, ABONNEMENT_DURATION_DAYS,
+  POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING
+} from '../utils/storage';
 
 export default function RechargePage() {
+  // Check subscription expiry on load
+  checkSubscriptionExpiry();
+
   const vendeur = getVendeur();
   const [selectedTier, setSelectedTier] = useState(null);
   const [method, setMethod] = useState(null);
@@ -16,9 +24,11 @@ export default function RechargePage() {
 
   const isKing = vendeur.role === 'king';
   const isDiambar = vendeur.role === 'diambar';
+  const isFree = vendeur.role === 'free';
   const currentPoints = getPoints(vendeur.numero);
   const revealsFromPoints = getRevealsFromPoints(vendeur.numero, vendeur.role);
   const revealCost = getRevealCost(vendeur.role);
+  const remainingDays = getSubscriptionRemainingDays();
 
   const processPayment = () => {
     if (selectedTier) {
@@ -32,6 +42,10 @@ export default function RechargePage() {
           vendeur.role = selectedTier.role;
           setUpgradedRole(selectedTier.role);
         }
+      }
+      // If same role subscription (renewal), update subscription date
+      if (selectedTier.role && selectedTier.role === vendeur.role) {
+        updateVendeurRole(vendeur.numero, selectedTier.role);
       }
     }
     if (upgradedRole || (selectedTier?.role && selectedTier.role !== 'free' && selectedTier.role !== vendeur.role)) {
@@ -47,8 +61,8 @@ export default function RechargePage() {
     return 'Free';
   };
 
-  // ── Section: Abonnements (shown for free users) ──
-  const ShowAbonnements = vendeur.role === 'free';
+  // ── Section: Abonnements (shown for free users or expired) ──
+  const ShowAbonnements = isFree;
 
   // Section: Choose tier
   if (step === 'choose' && !selectedTier) {
@@ -58,10 +72,20 @@ export default function RechargePage() {
           <div className="text-center mb-10">
             <div className="text-5xl mb-3">💎</div>
             <h1 className="text-2xl font-black text-white">Recharger des Points</h1>
-            <p className="text-gray-300 mt-2">1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : isDiambar ? '(tarif Diambar ⚡)' : ''}</p>
+            <p className="text-gray-300 mt-2">1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : isDiambar ? '(tarif Diambar ⚡)' : '(tarif standard)'}</p>
             <p className="text-gray-400 text-sm">Solde actuel : <span className="font-bold text-white">{currentPoints.toLocaleString('fr-FR')} pts</span> ({revealsFromPoints} révélations)</p>
-            {isDiambar && <p className="text-blue-400 font-bold text-sm mt-1">⚡ Abonnement Diambar actif</p>}
-            {isKing && <p className="text-yellow-400 font-bold text-sm mt-1">👑 Abonnement KING VIP actif</p>}
+            {isDiambar && (
+              <p className="text-blue-400 font-bold text-sm mt-1">
+                ⚡ Abonnement Diambar actif
+                {remainingDays > 0 && <span className="text-gray-400 font-normal"> — {remainingDays}j restants</span>}
+              </p>
+            )}
+            {isKing && (
+              <p className="text-yellow-400 font-bold text-sm mt-1">
+                👑 Abonnement KING VIP actif
+                {remainingDays > 0 && <span className="text-gray-400 font-normal"> — {remainingDays}j restants</span>}
+              </p>
+            )}
           </div>
 
           {/* ── Abonnements Diambar & KING ── */}
@@ -78,7 +102,7 @@ export default function RechargePage() {
                     <div className="text-center mb-4">
                       <span className="text-4xl">{ab.emoji}</span>
                       <h3 className={`text-xl font-black mt-2 ${ab.role === 'king' ? 'text-pro-king-gold' : 'text-blue-400'}`}>{ab.label}</h3>
-                      <p className="text-white text-2xl font-black mt-1">{ab.prix.toLocaleString('fr-FR')} <span className="text-sm text-gray-400">FCFA</span></p>
+                      <p className="text-white text-2xl font-black mt-1">{ab.prix.toLocaleString('fr-FR')} <span className="text-sm text-gray-400">FCFA/mois</span></p>
                     </div>
                     <ul className="space-y-2 mb-5">
                       {ab.perks.map((perk, i) => (
@@ -88,7 +112,7 @@ export default function RechargePage() {
                         </li>
                       ))}
                     </ul>
-                    <p className="text-center text-xs text-gray-400 mb-3">+ {ab.points.toLocaleString('fr-FR')} pts inclus</p>
+                    <p className="text-center text-xs text-gray-400 mb-3">+ {ab.points.toLocaleString('fr-FR')} pts inclus — Durée : {ABONNEMENT_DURATION_DAYS} jours</p>
                     <button onClick={() => {
                       const tier = TARIFS_RECHARGE.find(t => t.role === ab.role);
                       if (tier) setSelectedTier(tier);
@@ -105,6 +129,29 @@ export default function RechargePage() {
             </div>
           )}
 
+          {/* ── Renewal notice for premium users ── */}
+          {isKing && remainingDays <= 10 && (
+            <div className="mb-8 p-5 rounded-2xl bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl">⏳</span>
+                <h3 className="font-bold text-yellow-400">Abonnement KING VIP expire dans {remainingDays} jours</h3>
+              </div>
+              <p className="text-sm text-gray-300 mb-3">Tes points resteront, mais le prix de révélation redeviendra {POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts au lieu de {POINTS_REVELATION_KING.toLocaleString('fr-FR')} pts.</p>
+              <p className="text-xs text-gray-400">Renouvelle en achetant à nouveau le pack KING VIP ci-dessous.</p>
+            </div>
+          )}
+
+          {isDiambar && remainingDays <= 10 && (
+            <div className="mb-8 p-5 rounded-2xl bg-gradient-to-r from-blue-500/10 to-orange-500/10 border border-blue-500/30">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl">⏳</span>
+                <h3 className="font-bold text-blue-400">Abonnement Diambar expire dans {remainingDays} jours</h3>
+              </div>
+              <p className="text-sm text-gray-300 mb-3">Tes points resteront, mais le prix de révélation redeviendra {POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts au lieu de {POINTS_REVELATION_DIAMBAR.toLocaleString('fr-FR')} pts.</p>
+              <p className="text-xs text-gray-400">Renouvelle en achetant à nouveau le pack Diambar ci-dessous.</p>
+            </div>
+          )}
+
           {/* ── Recharges simples ── */}
           <h2 className="text-xl font-black text-white text-center mb-6">{ShowAbonnements ? 'Ou recharge simple' : '💎 Recharger des points'}</h2>
           <div className="max-w-3xl mx-auto space-y-4">
@@ -112,6 +159,7 @@ export default function RechargePage() {
               const tierRevealCost = tier.role ? getRevealCost(tier.role) : revealCost;
               const reveals = Math.floor(tier.points / tierRevealCost);
               const isAbonnement = !!tier.role;
+              const isRenewal = isAbonnement && ((isKing && tier.role === 'king') || (isDiambar && tier.role === 'diambar'));
               return (
                 <button key={tier.prix} onClick={() => setSelectedTier(tier)}
                   className={`w-full rounded-2xl p-5 flex items-center gap-5 transition-all hover:shadow-xl active:scale-[0.99] border-2 text-left ${
@@ -133,11 +181,12 @@ export default function RechargePage() {
                         isAbonnement && tier.role === 'king' ? 'bg-pro-king-gold text-pro-king-dark'
                           : isAbonnement && tier.role === 'diambar' ? 'bg-blue-500 text-white'
                           : isKing ? 'bg-gray-700 text-gray-300' : 'bg-pro-accent/30 text-gray-300'
-                      }`}>{tier.label}</span>
-                      {isAbonnement && tier.role === 'king' && <span className="text-xs font-bold bg-pro-king-gold text-pro-king-dark px-2 py-0.5 rounded-lg">MEILLEUR</span>}
+                      }`}>{isRenewal ? 'Renouvellement' : tier.label}</span>
+                      {isAbonnement && tier.role === 'king' && !isRenewal && <span className="text-xs font-bold bg-pro-king-gold text-pro-king-dark px-2 py-0.5 rounded-lg">MEILLEUR</span>}
                     </div>
                     <p className="text-sm text-gray-400 mt-1">
                       <span className="font-bold text-white">{tier.points.toLocaleString('fr-FR')} points</span> — {reveals} numéro{reveals > 1 ? 's' : ''} WhatsApp
+                      {isAbonnement && <span className="text-gray-500"> — {ABONNEMENT_DURATION_DAYS} jours</span>}
                     </p>
                   </div>
                   <svg className="w-6 h-6 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -164,7 +213,7 @@ export default function RechargePage() {
             <h1 className="text-2xl font-black text-white">{selectedTier.points.toLocaleString('fr-FR')} Points</h1>
             {isAbonnement && (
               <p className={`font-bold mt-2 ${selectedTier.role === 'king' ? 'text-pro-king-gold' : 'text-blue-400'}`}>
-                {selectedTier.role === 'king' ? '👑 Abonnement KING VIP' : '⚡ Abonnement Diambar'}
+                {selectedTier.role === 'king' ? '👑 Abonnement KING VIP' : '⚡ Abonnement Diambar'} — {ABONNEMENT_DURATION_DAYS} jours
               </p>
             )}
             <div className={`mt-3 inline-flex items-center gap-2 px-6 py-3 rounded-xl border ${
@@ -276,9 +325,10 @@ export default function RechargePage() {
           </h2>
           <p className="text-gray-300 mb-2">Tu es maintenant <span className={`font-bold ${isUpKing ? 'text-pro-king-gold' : 'text-blue-400'}`}>{isUpKing ? '👑 KING VIP' : '⚡ Diambar'}</span></p>
           <p className="text-gray-300 mb-2">Ton solde : <span className="font-bold text-pro-highlight">{newPoints.toLocaleString('fr-FR')} points</span></p>
-          <p className={`text-sm font-semibold mb-6 ${isUpKing ? 'text-pro-king-gold' : 'text-blue-400'}`}>
+          <p className={`text-sm font-semibold mb-2 ${isUpKing ? 'text-pro-king-gold' : 'text-blue-400'}`}>
             1 numéro WhatsApp = {newRevealCost.toLocaleString('fr-FR')} pts {isUpKing ? '(tarif KING 👑)' : '(tarif Diambar ⚡)'}
           </p>
+          <p className="text-xs text-gray-400 mb-6">Abonnement valable {ABONNEMENT_DURATION_DAYS} jours. Tes points restent si l'abonnement expire, mais le tarif redevient {POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts.</p>
           <a href="#/dashboard" className={`inline-block font-bold px-10 py-4 rounded-xl hover:shadow-xl transition ${
             isUpKing ? 'bg-gradient-to-r from-pro-king-gold to-yellow-500 text-pro-king-dark' : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
           }`}>
@@ -299,7 +349,7 @@ export default function RechargePage() {
           <h2 className="text-2xl font-black text-white mb-3">Points ajoutés !</h2>
           <p className="text-gray-300 mb-2">Ton solde est maintenant de <span className="font-bold text-pro-highlight">{newPoints.toLocaleString('fr-FR')} points</span>.</p>
           <p className="text-sm text-pro-highlight font-semibold mb-6">
-            1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : isDiambar ? '(tarif Diambar ⚡)' : ''}
+            1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : isDiambar ? '(tarif Diambar ⚡)' : '(tarif standard)'}
           </p>
           <a href="#/dashboard" className="inline-block bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold px-10 py-4 rounded-xl hover:shadow-xl transition">
             💎 Mon Dashboard
