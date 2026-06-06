@@ -3,6 +3,7 @@
 // ══════════════════════════════════════════════
 
 export const POINTS_PAR_REVELATION = 1500;  // Default cost per reveal
+export const POINTS_REVELATION_DIAMBAR = 1200;  // Diambar pay 1200 per reveal
 export const POINTS_REVELATION_KING = 1000;  // KING VIP pay 1000 per reveal
 export const KYC_INSCRIPTION_PRIX = 300;
 export const POINTS_KYC = 3000;
@@ -20,16 +21,41 @@ export const QUARTIERS = [
 ];
 
 export const TARIFS_RECHARGE = [
-  { prix: 1000, points: 9000, label: 'Découverte' },
-  { prix: 2000, points: 18000, label: 'Pro' },
-  { prix: 5000, points: 52000, label: 'Boss' },
-  { prix: 8000, points: 86000, label: 'King' },
-  { prix: 10000, points: 110000, label: 'VIP' },
+  { prix: 1000, points: 9000, label: 'Découverte', role: null },
+  { prix: 2000, points: 18000, label: 'Pro', role: null },
+  { prix: 5000, points: 52000, label: 'Diambar', role: 'diambar' },
+  { prix: 8000, points: 86000, label: 'KING VIP', role: 'king' },
+  { prix: 10000, points: 110000, label: 'VIP Max', role: 'king' },
+];
+
+export const ABONNEMENTS = [
+  {
+    role: 'diambar',
+    label: 'Diambar',
+    emoji: '⚡',
+    prix: 5000,
+    points: 52000,
+    revealCost: POINTS_REVELATION_DIAMBAR,
+    color: 'blue',
+    perks: ['1 numéro = 1 200 pts (au lieu de 1 500)', 'Badge ⚡ Diambar', 'Accès prioritaire aux annonces'],
+  },
+  {
+    role: 'king',
+    label: 'KING VIP',
+    emoji: '👑',
+    prix: 8000,
+    points: 86000,
+    revealCost: POINTS_REVELATION_KING,
+    color: 'gold',
+    perks: ['1 numéro = 1 000 pts (le meilleur tarif)', 'Badge 👑 KING VIP', 'Accès aux demandes FREE + PRO', 'Thème Gold exclusif'],
+  },
 ];
 
 // ── Dynamic reveal cost ──
 export function getRevealCost(role) {
-  return role === 'king' ? POINTS_REVELATION_KING : POINTS_PAR_REVELATION;
+  if (role === 'king') return POINTS_REVELATION_KING;
+  if (role === 'diambar') return POINTS_REVELATION_DIAMBAR;
+  return POINTS_PAR_REVELATION;
 }
 
 // ── Vendor storage ──

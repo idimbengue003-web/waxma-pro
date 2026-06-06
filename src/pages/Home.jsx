@@ -1,4 +1,4 @@
-import { TARIFS_RECHARGE, CATEGORIES_PRO, POINTS_PAR_REVELATION, POINTS_REVELATION_KING, KYC_INSCRIPTION_PRIX, POINTS_KYC } from '../utils/storage';
+import { TARIFS_RECHARGE, CATEGORIES_PRO, POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING, KYC_INSCRIPTION_PRIX, POINTS_KYC, ABONNEMENTS } from '../utils/storage';
 
 export default function Home({ onPosted }) {
   return (
@@ -21,7 +21,7 @@ export default function Home({ onPosted }) {
               Espace Vendeur
             </a>
             <a href="#/demandes" className="bg-white/10 text-white font-bold px-10 py-4 rounded-xl hover:bg-white/20 transition-all border border-white/20 text-lg">
-              Poster une demande
+              Voir les annonces
             </a>
           </div>
         </div>
@@ -35,7 +35,7 @@ export default function Home({ onPosted }) {
             {[
               { emoji: '📝', title: '1. Inscris-toi', desc: `${KYC_INSCRIPTION_PRIX}F caution = ${POINTS_KYC.toLocaleString('fr-FR')} Points. Vérification WhatsApp obligatoire.` },
               { emoji: '👀', title: '2. Consulte les demandes', desc: `Les acheteurs postent ce qu'ils cherchent. Filtre par catégorie : ${CATEGORIES_PRO.join(', ')}.` },
-              { emoji: '🔓', title: '3. Révèle & contacte', desc: `${POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts/révélation (KING : ${POINTS_REVELATION_KING.toLocaleString('fr-FR')} pts 👑). Contacte directement sur WhatsApp.` },
+              { emoji: '🔓', title: '3. Révèle & contacte', desc: `Free : ${POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts — Diambar ⚡ : ${POINTS_REVELATION_DIAMBAR.toLocaleString('fr-FR')} pts — KING 👑 : ${POINTS_REVELATION_KING.toLocaleString('fr-FR')} pts. Contacte directement sur WhatsApp.` },
             ].map(step => (
               <div key={step.title} className="bg-white rounded-2xl p-8 text-center shadow-lg card-hover">
                 <div className="text-5xl mb-4">{step.emoji}</div>
@@ -47,14 +47,36 @@ export default function Home({ onPosted }) {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Abonnements Premium */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-black text-center text-gray-900 mb-4">Tarifs Recharge</h2>
-          <p className="text-gray-500 text-center mb-10">1 numéro WhatsApp = {POINTS_PAR_REVELATION.toLocaleString('fr-FR')} pts (KING : {POINTS_REVELATION_KING.toLocaleString('fr-FR')} pts)</p>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {TARIFS_RECHARGE.map((t, i) => (
-              <div key={t.prix} className={`rounded-2xl p-5 text-center border-2 ${i === 2 ? 'border-pro-highlight bg-pro-highlight/5' : i === 4 ? 'border-pro-king-gold bg-pro-king-gold/5' : 'border-gray-200'}`}>
+          <h2 className="text-3xl font-black text-center text-gray-900 mb-4">Abonnements Premium</h2>
+          <p className="text-gray-500 text-center mb-10">Paye moins par numéro WhatsApp avec un abonnement</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            {ABONNEMENTS.map(ab => (
+              <div key={ab.role} className={`rounded-2xl p-6 border-2 ${ab.role === 'king' ? 'border-yellow-400 bg-yellow-50' : 'border-blue-400 bg-blue-50'}`}>
+                <div className="text-center mb-4">
+                  <span className="text-4xl">{ab.emoji}</span>
+                  <h3 className={`text-xl font-black mt-2 ${ab.role === 'king' ? 'text-yellow-700' : 'text-blue-700'}`}>{ab.label}</h3>
+                  <p className="text-gray-800 text-2xl font-black mt-1">{ab.prix.toLocaleString('fr-FR')} <span className="text-sm text-gray-500">FCFA</span></p>
+                </div>
+                <ul className="space-y-2 mb-4">
+                  {ab.perks.map((perk, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                      <span className="text-green-500 mt-0.5">✓</span>
+                      <span>{perk}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-center text-xs text-gray-400">+ {ab.points.toLocaleString('fr-FR')} pts inclus</p>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="text-2xl font-black text-center text-gray-900 mb-4">Recharges simples</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {TARIFS_RECHARGE.filter(t => !t.role).map(t => (
+              <div key={t.prix} className="rounded-2xl p-5 text-center border-2 border-gray-200">
                 <p className="text-xs font-bold text-gray-500 mb-1">{t.label}</p>
                 <p className="text-xl font-black text-gray-800">{t.prix.toLocaleString('fr-FR')}f</p>
                 <p className="text-sm font-bold text-pro-highlight mt-1">{t.points.toLocaleString('fr-FR')} pts</p>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   getWhatsAppLink, formatFCFA, timeAgo, maskPhone,
   getPoints, canReveal, deductPoints, recordReveal, getRevealCost,
-  POINTS_PAR_REVELATION, POINTS_REVELATION_KING,
+  POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING,
 } from '../utils/storage';
 
 export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurPhone, vendeurRole, onContacted }) {
@@ -27,16 +27,22 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
     }
   };
 
+  const roleLabel = isKing ? ' KING' : isDiambar ? ' Diambar' : '';
+  const roleTarif = isKing ? '(tarif KING 👑)' : isDiambar ? '(tarif Diambar ⚡)' : '';
+  const btnClass = isKing ? 'bg-gradient-to-r from-pro-king-gold to-yellow-500 text-pro-king-dark'
+    : isDiambar ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+    : 'bg-gradient-to-r from-pro-highlight to-emerald-600 text-white';
+
   return (
     <>
       <article className={`bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in-up card-hover ${
-        isKing ? 'ring-2 ring-pro-king-gold shadow-yellow-500/10' : isDiambar ? 'ring-2 ring-pro-highlight shadow-pro-highlight/10' : ''
+        isKing ? 'ring-2 ring-pro-king-gold shadow-yellow-500/10' : isDiambar ? 'ring-2 ring-blue-400 shadow-blue-500/10' : ''
       }`}>
         {demand.photo && (
           <div className="relative">
             <img src={demand.photo} alt={demand.title} className="w-full h-48 object-cover" />
             <span className={`absolute top-3 left-3 text-white text-xs font-bold px-3 py-1 rounded-lg ${
-              isKing ? 'bg-pro-king-gold text-pro-king-dark' : 'bg-pro-highlight'
+              isKing ? 'bg-pro-king-gold text-pro-king-dark' : isDiambar ? 'bg-blue-500 text-white' : 'bg-pro-highlight'
             }`}>{demand.category}</span>
           </div>
         )}
@@ -44,7 +50,7 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
         <div className="p-5">
           {!demand.photo && (
             <span className={`inline-block text-xs font-bold px-3 py-1 rounded-lg mb-3 ${
-              isKing ? 'bg-pro-king-gold/20 text-pro-king-dark' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
+              isKing ? 'bg-pro-king-gold/20 text-pro-king-dark' : isDiambar ? 'bg-blue-500/10 text-blue-600 border border-blue-500/20' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
             }`}>{demand.category}</span>
           )}
 
@@ -70,7 +76,7 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
           {revealed ? (
             <div className="space-y-3">
               <div className="p-4 rounded-xl text-center bg-pro-highlight/10 border border-pro-highlight/20">
-                <p className="text-xs text-gray-500 mb-1">Révélé avec {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : ''}</p>
+                <p className="text-xs text-gray-500 mb-1">Révélé avec {revealCost.toLocaleString('fr-FR')} pts {roleTarif}</p>
                 <p className="text-lg font-bold text-green-600">{demand.whatsapp}</p>
               </div>
               <a href={waLink} target="_blank" rel="noopener noreferrer"
@@ -91,11 +97,9 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
             </div>
           ) : canDoReveal ? (
             <button onClick={() => setShowConfirm(true)}
-              className={`w-full flex items-center justify-center gap-2 font-bold py-3.5 rounded-xl hover:shadow-lg active:scale-[0.98] transition-all text-sm ${
-                isKing ? 'bg-gradient-to-r from-pro-king-gold to-yellow-500 text-pro-king-dark' : 'bg-gradient-to-r from-pro-highlight to-emerald-600 text-white'
-              }`}>
+              className={`w-full flex items-center justify-center gap-2 font-bold py-3.5 rounded-xl hover:shadow-lg active:scale-[0.98] transition-all text-sm ${btnClass}`}>
               🔓 Voir numéro WhatsApp
-              <span className="text-xs opacity-80 ml-1">({revealCost.toLocaleString('fr-FR')} pts{isKing ? ' KING' : ''})</span>
+              <span className="text-xs opacity-80 ml-1">({revealCost.toLocaleString('fr-FR')} pts{roleLabel})</span>
             </button>
           ) : (
             <div className="space-y-3">
@@ -103,9 +107,7 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
                 <p className="text-sm font-bold text-red-600 mb-1">🔒 Points insuffisants</p>
                 <p className="text-xs text-red-500">Il te faut {revealCost.toLocaleString('fr-FR')} pts</p>
               </div>
-              <a href="#/recharge" className={`block text-center font-bold py-3 rounded-xl text-sm ${
-                isKing ? 'bg-gradient-to-r from-pro-king-gold to-yellow-500 text-pro-king-dark' : 'bg-gradient-to-r from-pro-highlight to-emerald-600 text-white'
-              }`}>💎 Acheter des points</a>
+              <a href="#/recharge" className={`block text-center font-bold py-3 rounded-xl text-sm ${btnClass}`}>💎 Acheter des points</a>
             </div>
           )}
         </div>
@@ -118,7 +120,7 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
             <div className="text-center mb-5">
               <div className="w-16 h-16 mx-auto bg-red-100 rounded-2xl flex items-center justify-center text-3xl mb-3">⚠️</div>
               <h3 className="text-lg font-black text-gray-800">Confirmer révélation</h3>
-              <p className="text-xl font-black text-red-600 mt-1">-{revealCost.toLocaleString('fr-FR')} Points {isKing ? '(tarif KING 👑)' : ''}</p>
+              <p className="text-xl font-black text-red-600 mt-1">-{revealCost.toLocaleString('fr-FR')} Points {roleTarif}</p>
             </div>
 
             <div className="bg-gray-50 rounded-xl p-4 mb-5 space-y-2">
@@ -162,11 +164,7 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
                 Annuler
               </button>
               <button onClick={confirmReveal}
-                className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition ${
-                  isKing
-                    ? 'bg-gradient-to-r from-pro-king-gold to-yellow-500 text-pro-king-dark hover:shadow-lg'
-                    : 'bg-gradient-to-r from-pro-highlight to-emerald-600 text-white hover:shadow-lg'
-                }`}>
+                className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition ${btnClass} hover:shadow-lg`}>
                 Confirmer -{revealCost.toLocaleString('fr-FR')}pts
               </button>
             </div>

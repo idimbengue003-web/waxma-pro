@@ -1,19 +1,21 @@
 import { useState } from 'react';
-import { getVendeur, getPoints, addPoints, TARIFS_RECHARGE, getRevealsFromPoints, getRevealCost, generateRef, POINTS_PAR_REVELATION, POINTS_REVELATION_KING } from '../utils/storage';
+import { getVendeur, getPoints, addPoints, TARIFS_RECHARGE, ABONNEMENTS, getRevealsFromPoints, getRevealCost, generateRef, updateVendeurRole, POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING } from '../utils/storage';
 
 export default function RechargePage() {
   const vendeur = getVendeur();
   const [selectedTier, setSelectedTier] = useState(null);
   const [method, setMethod] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState('choose'); // choose | paying | success
+  const [step, setStep] = useState('choose'); // choose | paying | success | upgraded
   const [phone, setPhone] = useState('');
   const [paymentRef, setPaymentRef] = useState('');
   const [error, setError] = useState('');
+  const [upgradedRole, setUpgradedRole] = useState(null);
 
   if (!vendeur) { window.location.hash = '#/vendeur'; return null; }
 
   const isKing = vendeur.role === 'king';
+  const isDiambar = vendeur.role === 'diambar';
   const currentPoints = getPoints(vendeur.numero);
   const revealsFromPoints = getRevealsFromPoints(vendeur.numero, vendeur.role);
   const revealCost = getRevealCost(vendeur.role);
@@ -21,43 +23,118 @@ export default function RechargePage() {
   const processPayment = () => {
     if (selectedTier) {
       addPoints(vendeur.numero, selectedTier.points);
+      // Auto-upgrade role if tier grants one
+      if (selectedTier.role && selectedTier.role !== vendeur.role) {
+        // Only upgrade, never downgrade
+        const rolePriority = { free: 0, diambar: 1, king: 2 };
+        if (rolePriority[selectedTier.role] > rolePriority[vendeur.role]) {
+          updateVendeurRole(vendeur.numero, selectedTier.role);
+          vendeur.role = selectedTier.role;
+          setUpgradedRole(selectedTier.role);
+        }
+      }
     }
-    setStep('success');
+    if (upgradedRole || (selectedTier?.role && selectedTier.role !== 'free' && selectedTier.role !== vendeur.role)) {
+      setStep('upgraded');
+    } else {
+      setStep('success');
+    }
   };
+
+  const getRoleLabel = (role) => {
+    if (role === 'king') return '👑 KING VIP';
+    if (role === 'diambar') return '⚡ Diambar';
+    return 'Free';
+  };
+
+  // ── Section: Abonnements (shown for free users) ──
+  const ShowAbonnements = vendeur.role === 'free';
 
   // Section: Choose tier
   if (step === 'choose' && !selectedTier) {
     return (
-      <div className={`py-16 px-4 ${isKing ? 'bg-pro-king-dark' : 'bg-pro-primary'}`}>
-        <div className="max-w-3xl mx-auto">
+      <div className={`py-16 px-4 ${isKing ? 'bg-pro-king-dark' : isDiambar ? 'bg-pro-primary' : 'bg-pro-primary'}`}>
+        <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <div className="text-5xl mb-3">💎</div>
             <h1 className="text-2xl font-black text-white">Recharger des Points</h1>
-            <p className="text-gray-300 mt-2">1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : ''}</p>
+            <p className="text-gray-300 mt-2">1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : isDiambar ? '(tarif Diambar ⚡)' : ''}</p>
             <p className="text-gray-400 text-sm">Solde actuel : <span className="font-bold text-white">{currentPoints.toLocaleString('fr-FR')} pts</span> ({revealsFromPoints} révélations)</p>
+            {isDiambar && <p className="text-blue-400 font-bold text-sm mt-1">⚡ Abonnement Diambar actif</p>}
+            {isKing && <p className="text-yellow-400 font-bold text-sm mt-1">👑 Abonnement KING VIP actif</p>}
           </div>
 
-          <div className="space-y-4">
-            {TARIFS_RECHARGE.map((tier, idx) => {
-              const reveals = Math.floor(tier.points / revealCost);
-              const isBest = idx === 4;
-              const isPopular = idx === 2;
+          {/* ── Abonnements Diambar & KING ── */}
+          {ShowAbonnements && (
+            <div className="mb-12">
+              <h2 className="text-xl font-black text-white text-center mb-6">🚀 Passe en abonnement premium</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {ABONNEMENTS.map(ab => (
+                  <div key={ab.role} className={`rounded-2xl p-6 border-2 transition hover:shadow-xl ${
+                    ab.role === 'king'
+                      ? 'bg-pro-king-gold/10 border-pro-king-gold/40 hover:border-pro-king-gold'
+                      : 'bg-blue-500/10 border-blue-500/40 hover:border-blue-500'
+                  }`}>
+                    <div className="text-center mb-4">
+                      <span className="text-4xl">{ab.emoji}</span>
+                      <h3 className={`text-xl font-black mt-2 ${ab.role === 'king' ? 'text-pro-king-gold' : 'text-blue-400'}`}>{ab.label}</h3>
+                      <p className="text-white text-2xl font-black mt-1">{ab.prix.toLocaleString('fr-FR')} <span className="text-sm text-gray-400">FCFA</span></p>
+                    </div>
+                    <ul className="space-y-2 mb-5">
+                      {ab.perks.map((perk, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                          <span className="text-green-400 mt-0.5">✓</span>
+                          <span>{perk}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="text-center text-xs text-gray-400 mb-3">+ {ab.points.toLocaleString('fr-FR')} pts inclus</p>
+                    <button onClick={() => {
+                      const tier = TARIFS_RECHARGE.find(t => t.role === ab.role);
+                      if (tier) setSelectedTier(tier);
+                    }} className={`w-full font-bold py-3.5 rounded-xl transition hover:shadow-lg ${
+                      ab.role === 'king'
+                        ? 'bg-gradient-to-r from-pro-king-gold to-yellow-500 text-pro-king-dark'
+                        : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+                    }`}>
+                      Devenir {ab.label} {ab.emoji}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Recharges simples ── */}
+          <h2 className="text-xl font-black text-white text-center mb-6">{ShowAbonnements ? 'Ou recharge simple' : '💎 Recharger des points'}</h2>
+          <div className="max-w-3xl mx-auto space-y-4">
+            {TARIFS_RECHARGE.filter(t => !t.role || t.role === vendeur.role).map((tier, idx) => {
+              const tierRevealCost = tier.role ? getRevealCost(tier.role) : revealCost;
+              const reveals = Math.floor(tier.points / tierRevealCost);
+              const isAbonnement = !!tier.role;
               return (
                 <button key={tier.prix} onClick={() => setSelectedTier(tier)}
                   className={`w-full rounded-2xl p-5 flex items-center gap-5 transition-all hover:shadow-xl active:scale-[0.99] border-2 text-left ${
                     isKing
-                      ? isBest ? 'bg-pro-king-gold/10 border-pro-king-gold/40 hover:border-pro-king-gold' : isPopular ? 'bg-pro-highlight/5 border-pro-highlight/30 hover:border-pro-highlight' : 'bg-gray-800/50 border-gray-700 hover:border-gray-500'
-                      : isBest ? 'bg-pro-king-gold/10 border-pro-king-gold/40 hover:border-pro-king-gold' : isPopular ? 'bg-pro-highlight/5 border-pro-highlight/30 hover:border-pro-highlight' : 'bg-pro-secondary border-pro-accent/40 hover:border-pro-accent'
+                      ? isAbonnement ? 'bg-pro-king-gold/10 border-pro-king-gold/40 hover:border-pro-king-gold' : 'bg-gray-800/50 border-gray-700 hover:border-gray-500'
+                      : isAbonnement
+                        ? tier.role === 'king' ? 'bg-pro-king-gold/10 border-pro-king-gold/40 hover:border-pro-king-gold' : 'bg-blue-500/10 border-blue-500/40 hover:border-blue-500'
+                        : 'bg-pro-secondary border-pro-accent/40 hover:border-pro-accent'
                   }`}>
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-xl font-black flex-shrink-0 ${
-                    isBest ? 'bg-pro-king-gold/20 text-pro-king-gold' : isPopular ? 'bg-pro-highlight/10 text-pro-highlight' : isKing ? 'bg-gray-700 text-gray-300' : 'bg-pro-accent/30 text-gray-300'
+                    isAbonnement && tier.role === 'king' ? 'bg-pro-king-gold/20 text-pro-king-gold'
+                      : isAbonnement && tier.role === 'diambar' ? 'bg-blue-500/20 text-blue-400'
+                      : isKing ? 'bg-gray-700 text-gray-300' : 'bg-pro-accent/30 text-gray-300'
                   }`}>{(tier.points / 1000).toFixed(0)}k</div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <p className="font-bold text-white text-lg">{tier.prix.toLocaleString('fr-FR')} FCFA</p>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${isKing ? 'bg-gray-700 text-gray-300' : 'bg-pro-accent/30 text-gray-300'}`}>{tier.label}</span>
-                      {isPopular && <span className="text-xs font-bold bg-pro-highlight text-white px-2 py-0.5 rounded-lg">POPULAIRE</span>}
-                      {isBest && <span className="text-xs font-bold bg-pro-king-gold text-pro-king-dark px-2 py-0.5 rounded-lg">MEILLEUR</span>}
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${
+                        isAbonnement && tier.role === 'king' ? 'bg-pro-king-gold text-pro-king-dark'
+                          : isAbonnement && tier.role === 'diambar' ? 'bg-blue-500 text-white'
+                          : isKing ? 'bg-gray-700 text-gray-300' : 'bg-pro-accent/30 text-gray-300'
+                      }`}>{tier.label}</span>
+                      {isAbonnement && tier.role === 'king' && <span className="text-xs font-bold bg-pro-king-gold text-pro-king-dark px-2 py-0.5 rounded-lg">MEILLEUR</span>}
                     </div>
                     <p className="text-sm text-gray-400 mt-1">
                       <span className="font-bold text-white">{tier.points.toLocaleString('fr-FR')} points</span> — {reveals} numéro{reveals > 1 ? 's' : ''} WhatsApp
@@ -77,13 +154,19 @@ export default function RechargePage() {
 
   // Section: Choose payment method
   if (step === 'choose' && selectedTier && !method) {
+    const isAbonnement = !!selectedTier.role;
     return (
       <div className={`py-16 px-4 ${isKing ? 'bg-pro-king-dark' : 'bg-pro-primary'}`}>
         <div className="max-w-lg mx-auto">
           <button onClick={() => setSelectedTier(null)} className="text-gray-400 text-sm mb-6 hover:text-white">← Retour</button>
           <div className="text-center mb-10">
-            <div className="text-5xl mb-3">💎</div>
+            <div className="text-5xl mb-3">{isAbonnement ? (selectedTier.role === 'king' ? '👑' : '⚡') : '💎'}</div>
             <h1 className="text-2xl font-black text-white">{selectedTier.points.toLocaleString('fr-FR')} Points</h1>
+            {isAbonnement && (
+              <p className={`font-bold mt-2 ${selectedTier.role === 'king' ? 'text-pro-king-gold' : 'text-blue-400'}`}>
+                {selectedTier.role === 'king' ? '👑 Abonnement KING VIP' : '⚡ Abonnement Diambar'}
+              </p>
+            )}
             <div className={`mt-3 inline-flex items-center gap-2 px-6 py-3 rounded-xl border ${
               isKing ? 'bg-gray-800 border-gray-700' : 'bg-pro-secondary border-pro-accent/30'
             }`}>
@@ -178,17 +261,45 @@ export default function RechargePage() {
     );
   }
 
-  // Section: Success
+  // Section: Upgraded (new subscription)
+  if (step === 'upgraded') {
+    const newRole = upgradedRole || selectedTier?.role;
+    const isUpKing = newRole === 'king';
+    const newPoints = getPoints(vendeur.numero);
+    const newRevealCost = getRevealCost(newRole);
+    return (
+      <div className={`min-h-[60vh] flex items-center justify-center px-4 ${isUpKing ? 'bg-pro-king-dark' : 'bg-pro-primary'}`}>
+        <div className="max-w-sm text-center">
+          <div className="text-7xl mb-5 animate-bounce">{isUpKing ? '👑' : '⚡'}</div>
+          <h2 className={`text-2xl font-black mb-3 ${isUpKing ? 'text-pro-king-gold' : 'text-blue-400'}`}>
+            {isUpKing ? 'KING VIP activé !' : 'Diambar activé !'}
+          </h2>
+          <p className="text-gray-300 mb-2">Tu es maintenant <span className={`font-bold ${isUpKing ? 'text-pro-king-gold' : 'text-blue-400'}`}>{isUpKing ? '👑 KING VIP' : '⚡ Diambar'}</span></p>
+          <p className="text-gray-300 mb-2">Ton solde : <span className="font-bold text-pro-highlight">{newPoints.toLocaleString('fr-FR')} points</span></p>
+          <p className={`text-sm font-semibold mb-6 ${isUpKing ? 'text-pro-king-gold' : 'text-blue-400'}`}>
+            1 numéro WhatsApp = {newRevealCost.toLocaleString('fr-FR')} pts {isUpKing ? '(tarif KING 👑)' : '(tarif Diambar ⚡)'}
+          </p>
+          <a href="#/dashboard" className={`inline-block font-bold px-10 py-4 rounded-xl hover:shadow-xl transition ${
+            isUpKing ? 'bg-gradient-to-r from-pro-king-gold to-yellow-500 text-pro-king-dark' : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+          }`}>
+            💎 Mon Dashboard
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Section: Success (simple recharge)
   if (step === 'success') {
     const newPoints = getPoints(vendeur.numero);
     return (
-      <div className={`min-h-[60vh] flex items-center justify-center px-4 ${isKing ? 'bg-pro-king-dark' : 'bg-pro-primary'}`}>
+      <div className={`min-h-[60vh] flex items-center justify-center px-4 ${isKing ? 'bg-pro-king-dark' : isDiambar ? 'bg-pro-primary' : 'bg-pro-primary'}`}>
         <div className="max-w-sm text-center">
           <div className="text-7xl mb-5 animate-bounce">💎</div>
           <h2 className="text-2xl font-black text-white mb-3">Points ajoutés !</h2>
           <p className="text-gray-300 mb-2">Ton solde est maintenant de <span className="font-bold text-pro-highlight">{newPoints.toLocaleString('fr-FR')} points</span>.</p>
           <p className="text-sm text-pro-highlight font-semibold mb-6">
-            1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : ''}
+            1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : isDiambar ? '(tarif Diambar ⚡)' : ''}
           </p>
           <a href="#/dashboard" className="inline-block bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold px-10 py-4 rounded-xl hover:shadow-xl transition">
             💎 Mon Dashboard
