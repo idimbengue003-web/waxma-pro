@@ -1,13 +1,13 @@
 export default function Footer() {
   return (
-    <footer className="bg-pro-primary border-t border-pro-accent/20 py-8 px-4">
+    <footer className="bg-[#0F1B2D] border-t border-blue-500/20 py-8 px-4">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-gradient-to-br from-pro-highlight to-emerald-600 text-white font-extrabold text-lg px-4 py-1.5 rounded-lg">Wakhma</div>
+          <div className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-extrabold text-lg px-4 py-1.5 rounded-lg">Wakhma</div>
           <span className="text-gray-400 text-sm">Le marché rapide de Dakar</span>
         </div>
         <div className="flex items-center gap-6">
-          <a href="https://wakhma-store.com" target="_blank" rel="noopener noreferrer" className="text-pro-highlight text-sm font-bold hover:underline">Wakhma Free →</a>
+          <a href="https://wakhma-store.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 text-sm font-bold hover:underline">Wakhma Free →</a>
           <span className="text-gray-500 text-xs">© 2024 Wakhma</span>
         </div>
       </div>
