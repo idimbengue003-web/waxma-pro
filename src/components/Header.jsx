@@ -21,7 +21,7 @@ export default function Header() {
 
   return (
     <header className={`backdrop-blur-md sticky top-0 z-50 border-b shadow-sm ${isKing ? 'bg-white/80 border-yellow-300' : 'bg-white/80 border-gray-200'}`}>
-      <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between gap-8">
         <div className="flex items-center gap-4">
           <a href="#/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`font-extrabold text-xl px-5 py-2.5 rounded-xl tracking-tight cursor-pointer transition-shadow ${
             isKing ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-md shadow-yellow-500/20 hover:shadow-lg hover:shadow-yellow-500/30' : 'bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30'
@@ -33,9 +33,9 @@ export default function Header() {
         </div>
 
         {/* Desktop */}
-        <nav className="hidden md:flex items-center gap-7">
+        <nav className="hidden md:flex items-center gap-7 ml-8">
           <a href="#/" className={`font-medium text-sm transition-colors ${isKing ? 'text-gray-600 hover:text-yellow-600' : 'text-gray-600 hover:text-emerald-600'}`}>Accueil</a>
-          <a href="#/demandes" className={`font-medium text-sm transition-colors ${isKing ? 'text-gray-600 hover:text-yellow-600' : 'text-gray-600 hover:text-emerald-600'}`}>📋 Annonces</a>
+          <a href="#/demandes" className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition ${isKing ? 'bg-yellow-50 text-yellow-700 border border-yellow-200 hover:bg-yellow-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'}`}>📋 Annonces</a>
           {vendeur && (
             <a href="#/recharge" className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition ${
               isKing ? 'bg-yellow-50 text-yellow-700 border border-yellow-200 hover:bg-yellow-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
