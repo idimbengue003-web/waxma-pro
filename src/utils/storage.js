@@ -218,6 +218,28 @@ export function maskPhone(phone) {
   return phone.slice(0, 2) + ' *** ** ' + phone.slice(-2);
 }
 
+// ── Detect & mask phone numbers in text ──
+// Matches Senegalese phone patterns: 7X XXX XX XX, 7XXXXXXXX, +221 7X..., etc.
+const PHONE_REGEX = /(\+221\s*)?7[0-8](\s?\d){7}/g;
+
+export function containsPhoneInText(text) {
+  if (!text) return false;
+  PHONE_REGEX.lastIndex = 0;
+  return PHONE_REGEX.test(text);
+}
+
+export function maskPhonesInText(text) {
+  if (!text) return text;
+  return text.replace(PHONE_REGEX, (match) => {
+    const digits = match.replace(/\D/g, '');
+    const sn = digits.slice(-8);
+    if (sn.length >= 8) {
+      return sn.slice(0, 2) + ' ─── ── ' + sn.slice(-2);
+    }
+    return '███ ─── ── ██';
+  });
+}
+
 export function generateId() {
   return 'DEM-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
 }

@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import {
-  getWhatsAppLink, formatFCFA, timeAgo, maskPhone,
+  getWhatsAppLink, formatFCFA, timeAgo, maskPhone, maskPhonesInText,
   getPoints, canReveal, deductPoints, recordReveal, getRevealCost, getVendeur,
   POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING,
 } from '../utils/storage';
 
 export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurPhone, vendeurRole, onContacted, source }) {
+  // Mask phone numbers in title/description to prevent bypassing reveal system
+  const displayTitle = maskPhonesInText(demand.title);
+  const displayDescription = maskPhonesInText(demand.description);
+
   const [revealed, setRevealed] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -85,7 +89,7 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
             </div>
           )}
 
-          <h3 className="text-lg font-bold text-gray-900 leading-tight mb-2">{demand.title}</h3>
+          <h3 className="text-lg font-bold text-gray-900 leading-tight mb-2">{displayTitle}</h3>
 
           <div className="flex items-center gap-3 mb-3">
             <span className="text-gray-400 text-xs">{timeAgo(demand.createdAt)}</span>
@@ -101,7 +105,7 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
             )}
           </div>
 
-          <p className="text-sm text-gray-500 leading-relaxed mb-4 line-clamp-3">{demand.description}</p>
+          <p className="text-sm text-gray-500 leading-relaxed mb-4 line-clamp-3">{displayDescription}</p>
 
           {demand.budget > 0 && (
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">

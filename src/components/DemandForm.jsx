@@ -1,17 +1,22 @@
 import { useState } from 'react';
-import { CATEGORIES_PRO, QUARTIERS, generateId, saveDemandLocal, isLimitReached, incrementWeeklyCount, getStoredPhone, setStoredPhone, DEMAND_LIMIT_PER_WEEK, formatFCFA } from '../utils/storage';
+import { CATEGORIES_PRO, QUARTIERS, generateId, saveDemandLocal, isLimitReached, incrementWeeklyCount, getStoredPhone, setStoredPhone, DEMAND_LIMIT_PER_WEEK, formatFCFA, containsPhoneInText } from '../utils/storage';
 
 export default function DemandForm({ onPosted }) {
   const [form, setForm] = useState({
     category: CATEGORIES_PRO[0], title: '', description: '', budget: '', whatsapp: getStoredPhone(), quartier: '', photo: null,
   });
   const [error, setError] = useState('');
+  const [phoneWarning, setPhoneWarning] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(f => ({ ...f, [name]: value }));
+    // Check if user is typing a phone number in title/description
+    if (name === 'title' || name === 'description') {
+      setPhoneWarning(containsPhoneInText(value));
+    }
   };
 
   const handlePhoto = (e) => {
@@ -28,6 +33,11 @@ export default function DemandForm({ onPosted }) {
     setError('');
     if (!form.title.trim()) { setError('Titre obligatoire'); return; }
     if (!form.description.trim()) { setError('Description obligatoire'); return; }
+    // Block phone numbers in title/description
+    if (containsPhoneInText(form.title) || containsPhoneInText(form.description)) {
+      setError('Tu ne peux pas mettre ton numéro dans le titre ou la description ! Les vendeurs te contacteront via Wakhma.');
+      return;
+    }
     if (!form.whatsapp.trim() || !/^7[0-8]\d{7}$/.test(form.whatsapp.trim())) { setError('Numéro WhatsApp invalide'); return; }
     if (isLimitReached(form.whatsapp.trim())) { setError(`Limite ${DEMAND_LIMIT_PER_WEEK}/sem atteinte, revenez lundi.`); return; }
 
@@ -66,6 +76,15 @@ export default function DemandForm({ onPosted }) {
         </div>
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8 space-y-5">
           {error && <div className="bg-red-50 border-2 border-red-300 text-red-700 p-4 rounded-xl text-sm text-center font-medium">{error}</div>}
+          {phoneWarning && (
+            <div className="bg-orange-50 border-2 border-orange-300 text-orange-700 p-4 rounded-xl text-sm font-medium flex items-start gap-2">
+              <span className="text-lg">🚫</span>
+              <div>
+                <p className="font-bold">Pas de numéro ici !</p>
+                <p className="text-xs text-orange-600 mt-1">Les vendeurs te contactent via Wakhma. Ne mets pas ton numéro dans le texte.</p>
+              </div>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">Catégorie *</label>
             <select name="category" value={form.category} onChange={handleChange}
