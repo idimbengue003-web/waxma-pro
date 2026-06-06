@@ -10,11 +10,12 @@ export default function VendeurDashboard({ onLogout }) {
   const isFree = vendeur?.role === 'free';
   const isPremium = isKing || isDiambar;
 
-  const [activeTab, setActiveTab] = useState('pro');
+  const [activeTab, setActiveTab] = useState(isKing ? 'king-free' : 'pro');
   const [selectedCategory, setSelectedCategory] = useState('Toutes');
   const [demands, setDemands] = useState(getDemandsLocal());
   const [freeDemands, setFreeDemands] = useState([]);
   const [freeLoading, setFreeLoading] = useState(false);
+  const [proLoading, setProLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [contactRefresh, setContactRefresh] = useState(0);
 
@@ -26,15 +27,31 @@ export default function VendeurDashboard({ onLogout }) {
   const normalCost = POINTS_PAR_REVELATION;
   const saving = normalCost - revealCost;
 
+  // Fetch FREE demands for KING
   useEffect(() => {
     if (isKing && activeTab === 'king-free') {
       setFreeLoading(true);
       fetch(`${FREE_URL}/api/get-demandes`)
         .then(r => r.json())
         .then(data => { setFreeDemands(data.demands || []); setFreeLoading(false); })
-        .catch(() => { setFreeLoading(false); });
+        .catch(() => { setFreeDemands([]); setFreeLoading(false); });
     }
   }, [isKing, activeTab]);
+
+  // Fetch PRO demands from API on load
+  useEffect(() => {
+    if (activeTab === 'pro') {
+      setProLoading(true);
+      fetch('/api/get-demandes')
+        .then(r => r.json())
+        .then(data => {
+          const apiDemands = data.demands || [];
+          if (apiDemands.length > 0) setDemands(apiDemands);
+          setProLoading(false);
+        })
+        .catch(() => { setProLoading(false); });
+    }
+  }, [activeTab]);
 
   const source = activeTab === 'king-free' ? freeDemands : demands;
   const filtered = source.filter(d => {

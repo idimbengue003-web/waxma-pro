@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   getWhatsAppLink, formatFCFA, timeAgo, maskPhone,
-  getPoints, canReveal, deductPoints, recordReveal, getRevealCost,
+  getPoints, canReveal, deductPoints, recordReveal, getRevealCost, getVendeur,
   POINTS_PAR_REVELATION, POINTS_REVELATION_DIAMBAR, POINTS_REVELATION_KING,
 } from '../utils/storage';
 
@@ -16,7 +16,17 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
   const revealsFromPoints = Math.floor(points / revealCost);
   const canDoReveal = points >= revealCost;
 
-  const waLink = getWhatsAppLink(demand.whatsapp, `Bonjour ! J'ai vu ta demande sur Wakhma PRO : "${demand.title}". Je peux te proposer quelque chose !`);
+  // Build WhatsApp message with VIP badge
+  const vendeur = getVendeur();
+  const vendeurName = vendeur?.nom || '';
+  const vipBadge = isKing ? '★ KING VIP Wakhma ★' : isDiambar ? '★ Diambar Wakhma ★' : '';
+  const waMessage = isKing
+    ? `★ KING VIP Wakhma ★\nBonjour ! Je suis ${vendeurName}, vendeur certifié KING VIP sur Wakhma PRO 👑\n\nJ'ai vu ta demande : "${demand.title}"\nJe peux te proposer quelque chose !`
+    : isDiambar
+    ? `★ Diambar Wakhma ★\nBonjour ! Je suis ${vendeurName}, vendeur Diambar sur Wakhma PRO ⚡\n\nJ'ai vu ta demande : "${demand.title}"\nJe peux te proposer quelque chose !`
+    : `Bonjour ! J'ai vu ta demande sur Wakhma PRO : "${demand.title}". Je peux te proposer quelque chose !`;
+
+  const waLink = getWhatsAppLink(demand.whatsapp, waMessage);
 
   const confirmReveal = () => {
     if (deductPoints(phone, revealCost)) {
