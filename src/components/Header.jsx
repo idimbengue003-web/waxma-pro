@@ -20,75 +20,83 @@ export default function Header() {
   };
 
   return (
-    <header className={`sticky top-0 z-50 border-b ${isKing ? 'bg-pro-king-dark border-pro-king-gold/20' : 'bg-pro-primary/95 backdrop-blur-md border-pro-accent/20'}`}>
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <a href="#/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`font-extrabold text-xl px-4 py-2 rounded-xl tracking-tight cursor-pointer ${
-            isKing ? 'bg-pro-king-gold text-pro-king-dark' : 'bg-gradient-to-br from-pro-highlight to-emerald-600 text-white shadow-lg shadow-pro-highlight/20'
-          }`}>Wakhma</a>
-          <span className={`font-bold text-xs px-3 py-1 rounded-lg uppercase tracking-wider ${
-            isKing ? 'text-pro-king-gold bg-pro-king-gold/10 border border-pro-king-gold/20' : 'text-pro-highlight bg-pro-highlight/10 border border-pro-highlight/20'
-          }`}>PRO</span>
-          {isKing && <span className="text-lg">👑</span>}
-        </div>
+    <header className="sticky top-0 z-50">
+      {/* Barre principale */}
+      <div className={`border-b ${isKing ? 'bg-pro-king-dark border-pro-king-gold/30' : 'bg-pro-primary/95 backdrop-blur-md border-pro-accent/30'}`}>
+        <div className="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <a href="#/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`font-extrabold text-xl px-4 py-2 rounded-xl tracking-tight cursor-pointer ${
+              isKing ? 'bg-pro-king-gold text-pro-king-dark' : 'bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-500/20'
+            }`}>Wakhma</a>
+            <div className="flex flex-col">
+              <span className={`font-black text-[10px] leading-tight uppercase tracking-widest ${isKing ? 'text-pro-king-gold' : 'text-blue-400'}`}>PRO</span>
+              <span className={`text-[9px] leading-tight ${isKing ? 'text-yellow-300' : 'text-blue-300'}`}>Vendeurs</span>
+            </div>
+            {isKing && <span className="text-lg">👑</span>}
+          </div>
 
-        {/* Desktop */}
-        <nav className="hidden md:flex items-center gap-5">
-          <a href="#/" className={`font-medium text-sm ${isKing ? 'text-gray-300 hover:text-pro-king-gold' : 'text-gray-200 hover:text-white'}`}>Accueil</a>
-          <a href="#/demandes" className={`font-medium text-sm ${isKing ? 'text-gray-300 hover:text-pro-king-gold' : 'text-gray-200 hover:text-white'}`}>📋 Annonces</a>
-          {vendeur && (
-            <a href="#/recharge" className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition ${
-              isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border border-pro-king-gold/20' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
-            }`}>
-              <span>💎</span>
-              <span>{points.toLocaleString('fr-FR')}</span>
-              <span className={`text-xs font-normal ${isKing ? 'text-gray-400' : 'text-gray-300'}`}>pts</span>
-              {revealsFromPoints > 0 && (
-                <span className={`text-xs ml-1 px-2 py-0.5 rounded-lg ${isKing ? 'bg-pro-king-gold/20 text-pro-king-gold' : 'bg-pro-highlight/20 text-pro-highlight'}`}>
-                  {revealsFromPoints} dispo
-                </span>
-              )}
-            </a>
-          )}
-          {vendeur ? (
-            <a href="#/dashboard" className="bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm">Dashboard</a>
-          ) : (
-            <a href="#/vendeur" className="bg-gradient-to-r from-pro-blue to-blue-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm">Espace Vendeur</a>
-          )}
-          {showAdmin ? (
-            <>
-              <a href="#/admin" className={`font-bold text-sm px-4 py-2 rounded-xl ${isKing ? 'text-pro-king-gold bg-pro-king-gold/10 border border-pro-king-gold/20 hover:bg-pro-king-gold/20' : 'text-pro-highlight bg-pro-highlight/10 border border-pro-highlight/20 hover:bg-pro-highlight/20'} transition`}>ADMIN 🔒</a>
-              <button onClick={handleLogout} className={`text-xs hover:text-red-400 transition-colors ${isKing ? 'text-gray-500' : 'text-gray-400'}`}>Déconnexion</button>
-            </>
-          ) : (
-            <a href="#/login" className={`text-xs ${isKing ? 'text-gray-500 hover:text-pro-king-gold' : 'text-gray-400 hover:text-white'}`}>Se connecter</a>
-          )}
-        </nav>
+          {/* Desktop */}
+          <nav className="hidden md:flex items-center gap-5">
+            <a href="#/" className={`font-medium text-sm ${isKing ? 'text-gray-300 hover:text-pro-king-gold' : 'text-gray-200 hover:text-white'}`}>Accueil</a>
+            <a href="#/demandes" className={`font-medium text-sm ${isKing ? 'text-gray-300 hover:text-pro-king-gold' : 'text-gray-200 hover:text-white'}`}>📋 Annonces</a>
+            {vendeur && (
+              <a href="#/recharge" className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition ${
+                isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border border-pro-king-gold/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+              }`}>
+                <span>💎</span>
+                <span>{points.toLocaleString('fr-FR')}</span>
+                <span className={`text-xs font-normal ${isKing ? 'text-gray-400' : 'text-gray-300'}`}>pts</span>
+                {revealsFromPoints > 0 && (
+                  <span className={`text-xs ml-1 px-2 py-0.5 rounded-lg ${isKing ? 'bg-pro-king-gold/20 text-pro-king-gold' : 'bg-blue-500/20 text-blue-400'}`}>
+                    {revealsFromPoints} dispo
+                  </span>
+                )}
+              </a>
+            )}
+            {vendeur ? (
+              <a href="#/dashboard" className={`font-bold px-6 py-2.5 rounded-xl text-sm ${isKing ? 'bg-gradient-to-r from-pro-king-gold to-yellow-500 text-pro-king-dark' : 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'}`}>Dashboard</a>
+            ) : (
+              <a href="#/vendeur" className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm">Espace Vendeur</a>
+            )}
+            {showAdmin ? (
+              <>
+                <a href="#/admin" className={`font-bold text-sm px-4 py-2 rounded-xl ${isKing ? 'text-pro-king-gold bg-pro-king-gold/10 border border-pro-king-gold/20 hover:bg-pro-king-gold/20' : 'text-blue-400 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20'} transition`}>ADMIN 🔒</a>
+                <button onClick={handleLogout} className={`text-xs hover:text-red-400 transition-colors ${isKing ? 'text-gray-500' : 'text-gray-400'}`}>Déconnexion</button>
+              </>
+            ) : (
+              <a href="#/login" className={`text-xs ${isKing ? 'text-gray-500 hover:text-pro-king-gold' : 'text-gray-400 hover:text-white'}`}>Se connecter</a>
+            )}
+          </nav>
 
-        {/* Mobile */}
-        <div className="md:hidden flex items-center gap-3">
-          <a href="#/demandes" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
-            isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border border-pro-king-gold/20' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
-          }`}>📋 Annonces</a>
-          {vendeur && (
-            <a href="#/recharge" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
-              isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border border-pro-king-gold/20' : 'bg-pro-highlight/10 text-pro-highlight border border-pro-highlight/20'
-            }`}>💎 {points.toLocaleString('fr-FR')}</a>
-          )}
-          <button onClick={() => setMenuOpen(!menuOpen)} className={`p-2 ${isKing ? 'text-pro-king-gold' : 'text-white'}`}>
-            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              {menuOpen ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
-            </svg>
-          </button>
+          {/* Mobile */}
+          <div className="md:hidden flex items-center gap-2">
+            <a href="#/demandes" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
+              isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border border-pro-king-gold/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+            }`}>📋 Annonces</a>
+            {vendeur && (
+              <a href="#/recharge" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${
+                isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border border-pro-king-gold/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+              }`}>💎 {points.toLocaleString('fr-FR')}</a>
+            )}
+            <button onClick={() => setMenuOpen(!menuOpen)} className={`p-2 ${isKing ? 'text-pro-king-gold' : 'text-white'}`}>
+              <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                {menuOpen ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className={`text-center py-2.5 text-sm font-medium tracking-wide border-y ${
-        isKing ? 'bg-pro-king-gold/10 text-pro-king-gold border-pro-king-gold/10' : 'bg-pro-secondary text-white border-pro-accent/10'
+      {/* Bandeau séparateur PRO */}
+      <div className={`text-center py-2 text-xs font-bold tracking-wide ${
+        isKing
+          ? 'bg-pro-king-gold text-pro-king-dark'
+          : 'bg-blue-600 text-white'
       }`}>
-        {isKing && '👑 KING — '}
-        <span className={isKing ? '' : 'text-pro-highlight'}>Le marché rapide</span> de Dakar
+        {isKing ? '👑 KING VIP — ' : ''}🏪 WAKHMA PRO — Je vends, les clients me trouvent.
+        <span className="mx-3 opacity-50">|</span>
+        <a href="https://wakhma-store.com" className={`underline hover:no-underline ${isKing ? 'opacity-80' : 'opacity-80'}`}>Tu cherches ? → FREE</a>
       </div>
 
       {menuOpen && (
@@ -120,9 +128,9 @@ export default function Header() {
             )}
 
             {vendeur ? (
-              <a href="#/dashboard" onClick={() => setMenuOpen(false)} className="bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold py-3.5 px-5 rounded-xl text-center text-sm">📊 Dashboard</a>
+              <a href="#/dashboard" onClick={() => setMenuOpen(false)} className={`font-bold py-3.5 px-5 rounded-xl text-center text-sm ${isKing ? 'bg-gradient-to-r from-pro-king-gold to-yellow-500 text-pro-king-dark' : 'bg-gradient-to-r from-pro-highlight to-emerald-600 text-white'}`}>📊 Dashboard</a>
             ) : (
-              <a href="#/vendeur" onClick={() => setMenuOpen(false)} className="bg-gradient-to-r from-pro-blue to-blue-600 text-white font-bold py-3.5 px-5 rounded-xl text-center text-sm">🏪 Espace Vendeur</a>
+              <a href="#/vendeur" onClick={() => setMenuOpen(false)} className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold py-3.5 px-5 rounded-xl text-center text-sm">🏪 Espace Vendeur</a>
             )}
 
             {showAdmin ? (
