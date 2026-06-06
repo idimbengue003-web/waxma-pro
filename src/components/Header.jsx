@@ -23,9 +23,9 @@ export default function Header() {
     <header className={`sticky top-0 z-50 border-b ${isKing ? 'bg-pro-king-dark border-pro-king-gold/20' : 'bg-pro-primary/95 backdrop-blur-md border-pro-accent/20'}`}>
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`font-extrabold text-xl px-4 py-2 rounded-xl tracking-tight ${
+          <a href="#/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`font-extrabold text-xl px-4 py-2 rounded-xl tracking-tight cursor-pointer ${
             isKing ? 'bg-pro-king-gold text-pro-king-dark' : 'bg-gradient-to-br from-pro-highlight to-emerald-600 text-white shadow-lg shadow-pro-highlight/20'
-          }`}>Wakhma</div>
+          }`}>Wakhma</a>
           <span className={`font-bold text-xs px-3 py-1 rounded-lg uppercase tracking-wider ${
             isKing ? 'text-pro-king-gold bg-pro-king-gold/10 border border-pro-king-gold/20' : 'text-pro-highlight bg-pro-highlight/10 border border-pro-highlight/20'
           }`}>PRO</span>
