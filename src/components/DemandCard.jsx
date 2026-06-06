@@ -16,7 +16,7 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
   const revealsFromPoints = Math.floor(points / revealCost);
   const canDoReveal = points >= revealCost;
 
-  const waLink = getWhatsAppLink(demand.whatsapp, `Bonjour ! J'ai vu ta demande sur WAXMA PRO : "${demand.title}". Je peux te proposer quelque chose !`);
+  const waLink = getWhatsAppLink(demand.whatsapp, `Bonjour ! J'ai vu ta demande sur Wakhma PRO : "${demand.title}". Je peux te proposer quelque chose !`);
 
   const confirmReveal = () => {
     if (deductPoints(phone, revealCost)) {
@@ -152,7 +152,7 @@ export default function DemandCard({ demand, isKing, isDiambar, isFree, vendeurP
 
             <div className="bg-red-50 border-2 border-red-200 rounded-xl p-3 mb-5">
               <p className="text-xs font-bold text-red-700 leading-relaxed">
-                ⚠️ WAXMA ne rembourse PAS les Points. Vérifiez budget + quartier avant de confirmer. Si client pas sérieux, c'est votre choix.
+                ⚠️ Wakhma ne rembourse PAS les Points. Vérifiez budget + quartier avant de confirmer. Si client pas sérieux, c'est votre choix.
               </p>
             </div>
 

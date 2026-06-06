@@ -1,4 +1,4 @@
-// WAXMA PRO — Get Demands API (CORS enabled for cross-domain)
+// Wakhma PRO — Get Demands API (CORS enabled for cross-domain)
 let demands = [];
 
 export default function handler(req, res) {

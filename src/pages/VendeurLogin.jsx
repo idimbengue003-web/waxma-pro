@@ -28,8 +28,8 @@ export default function VendeurLogin({ onLogin }) {
     if (!nom.trim()) { setError('Nom de boutique obligatoire'); return; }
     if (!phone.trim() || !/^7[0-8]\d{7}$/.test(phone.trim())) { setError('Numéro WhatsApp invalide (77/78/76/70...)'); return; }
     // Check duplicate
-    const existing = JSON.parse(localStorage.getItem('waxma_pro_vendeurs') || '[]');
-    if (existing.find(v => v.numero === phone.trim())) { setError('Numéro déjà inscrit sur WAXMA'); return; }
+    const existing = JSON.parse(localStorage.getItem('wakhma_pro_vendeurs') || '[]');
+    if (existing.find(v => v.numero === phone.trim())) { setError('Numéro déjà inscrit sur Wakhma'); return; }
     sendOtp();
   };
 
@@ -54,14 +54,14 @@ export default function VendeurLogin({ onLogin }) {
     };
     setVendeur(vendeur);
     // Save to list
-    const vendeurs = JSON.parse(localStorage.getItem('waxma_pro_vendeurs') || '[]');
+    const vendeurs = JSON.parse(localStorage.getItem('wakhma_pro_vendeurs') || '[]');
     vendeurs.push(vendeur);
-    localStorage.setItem('waxma_pro_vendeurs', JSON.stringify(vendeurs));
+    localStorage.setItem('wakhma_pro_vendeurs', JSON.stringify(vendeurs));
     setStep(4);
   };
 
   const handleLogin = () => {
-    const existing = JSON.parse(localStorage.getItem('waxma_pro_vendeurs') || '[]');
+    const existing = JSON.parse(localStorage.getItem('wakhma_pro_vendeurs') || '[]');
     const found = existing.find(v => v.numero === phone.trim());
     if (found) { setVendeur(found); onLogin?.(found); window.location.hash = '#/dashboard'; }
     else { setError('Numéro non trouvé. Inscris-toi d\'abord.'); }
@@ -74,7 +74,7 @@ export default function VendeurLogin({ onLogin }) {
           <div className="text-7xl mb-5 animate-bounce">🎉</div>
           <h2 className="text-2xl font-black text-white mb-3">Bienvenue Pro !</h2>
           <p className="text-gray-300 mb-2">{KYC_INSCRIPTION_PRIX}F = {POINTS_KYC.toLocaleString('fr-FR')} Points = {Math.floor(POINTS_KYC / 1500)} révélations test.</p>
-          <p className="text-red-600 font-bold text-sm mb-6">Choisis bien. WAXMA ne rembourse PAS les Points.</p>
+          <p className="text-red-600 font-bold text-sm mb-6">Choisis bien. Wakhma ne rembourse PAS les Points.</p>
           <a href="#/dashboard" className="inline-block bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold px-10 py-4 rounded-xl hover:shadow-lg transition">
             💎 Mon Dashboard
           </a>
@@ -123,14 +123,14 @@ export default function VendeurLogin({ onLogin }) {
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <div className="text-5xl mb-3">🟠</div>
-            <h1 className="text-2xl font-black text-white">Caution Pro WAXMA</h1>
+            <h1 className="text-2xl font-black text-white">Caution Pro Wakhma</h1>
             <p className="text-gray-300 mt-2">{KYC_INSCRIPTION_PRIX}F crédités {POINTS_KYC.toLocaleString('fr-FR')} Points</p>
           </div>
           <div className="bg-white rounded-2xl shadow-xl p-8 space-y-5">
             <div className="bg-orange-50 border-2 border-orange-300 rounded-xl p-5 text-center">
               <p className="text-sm text-orange-700 mb-2">Envoie {KYC_INSCRIPTION_PRIX}F via Orange Money</p>
               <p className="text-xs text-orange-600">Au numéro : #144#</p>
-              <p className="text-xs text-orange-500 mt-1">Motif : Caution Pro WAXMA - {KYC_INSCRIPTION_PRIX}F</p>
+              <p className="text-xs text-orange-500 mt-1">Motif : Caution Pro Wakhma - {KYC_INSCRIPTION_PRIX}F</p>
             </div>
             <button onClick={handleStep3}
               className="w-full bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold py-4 rounded-xl hover:shadow-lg transition text-sm">
@@ -168,7 +168,7 @@ export default function VendeurLogin({ onLogin }) {
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-600">
             <p className="font-bold mb-2">💡 Inscription = {KYC_INSCRIPTION_PRIX}F</p>
             <p>{KYC_INSCRIPTION_PRIX}F = {POINTS_KYC.toLocaleString('fr-FR')} Points = {Math.floor(POINTS_KYC / 1500)} révélations test</p>
-            <p className="text-red-600 font-semibold mt-2 text-xs">WAXMA ne rembourse PAS les Points.</p>
+            <p className="text-red-600 font-semibold mt-2 text-xs">Wakhma ne rembourse PAS les Points.</p>
           </div>
 
           <button onClick={handleStep1}

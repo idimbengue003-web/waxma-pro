@@ -10,7 +10,7 @@ export default function AdminPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (password !== 'waxma2024') return;
+    if (password !== 'wakhma2024') return;
     setAuthenticated(true);
     loadData();
   };
@@ -21,7 +21,7 @@ export default function AdminPage() {
       const data = await res.json();
       if (data.demands) setDemands(data.demands);
     } catch {}
-    setVendeurs(JSON.parse(localStorage.getItem('waxma_pro_vendeurs') || '[]'));
+    setVendeurs(JSON.parse(localStorage.getItem('wakhma_pro_vendeurs') || '[]'));
   };
 
   if (!authenticated) {
@@ -33,7 +33,7 @@ export default function AdminPage() {
               placeholder="Mot de passe admin" className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-pro-highlight focus:outline-none text-sm" />
             <button type="submit" className="w-full bg-pro-primary text-white font-bold py-3 rounded-xl">Connexion</button>
           </form>
-          <p className="text-center text-gray-400 text-xs mt-3">Défaut: waxma2024</p>
+          <p className="text-center text-gray-400 text-xs mt-3">Défaut: wakhma2024</p>
         </div>
       </div>
     );
@@ -43,7 +43,7 @@ export default function AdminPage() {
     <div className="py-6 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-extrabold text-gray-800">🔧 Admin WAXMA PRO</h1>
+          <h1 className="text-2xl font-extrabold text-gray-800">🔧 Admin Wakhma PRO</h1>
           <button onClick={loadData} className="text-sm text-pro-highlight font-semibold hover:underline">Rafraîchir</button>
         </div>
         <div className="flex gap-2 mb-4 overflow-x-auto">

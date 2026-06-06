@@ -1,4 +1,4 @@
-// WAXMA PRO — Post Demand API
+// Wakhma PRO — Post Demand API
 let demands = [];
 
 export default function handler(req, res) {

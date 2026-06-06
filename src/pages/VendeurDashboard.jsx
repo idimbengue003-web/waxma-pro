@@ -62,7 +62,7 @@ export default function VendeurDashboard({ onLogout }) {
                 <p className={`text-sm ${isKing ? 'text-gray-400' : 'text-gray-300'}`}>{vendeur.numero}</p>
               </div>
             </div>
-            <button onClick={() => { localStorage.removeItem('waxma_pro_vendeur'); onLogout?.(); }}
+            <button onClick={() => { localStorage.removeItem('wakhma_pro_vendeur'); onLogout?.(); }}
               className={`text-sm px-5 py-2.5 rounded-xl transition ${isKing ? 'text-gray-400 border border-gray-700 hover:bg-gray-800' : 'text-gray-300 border border-pro-accent/40 hover:bg-pro-accent/30'}`}>Déconnexion</button>
           </div>
 
@@ -89,7 +89,7 @@ export default function VendeurDashboard({ onLogout }) {
               </div>
             </div>
             <p className={`text-xs mt-3 ${isKing ? 'text-gray-500' : 'text-gray-400'}`}>
-              1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : ''} — WAXMA ne rembourse PAS les points.
+              1 numéro WhatsApp = {revealCost.toLocaleString('fr-FR')} pts {isKing ? '(tarif KING 👑)' : ''} — Wakhma ne rembourse PAS les points.
             </p>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function VendeurDashboard({ onLogout }) {
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h2 className={`text-2xl font-extrabold ${isKing ? 'text-white' : 'text-white'}`}>
-              {activeTab === 'king-free' ? '👑 Demandes WAXMA FREE' : '📋 Demandes PRO'}
+              {activeTab === 'king-free' ? '👑 Demandes Wakhma FREE' : '📋 Demandes PRO'}
             </h2>
             <p className={`mt-2 text-sm ${isKing ? 'text-gray-400' : 'text-gray-300'}`}>
               Achète des points pour révéler les numéros WhatsApp des clients.

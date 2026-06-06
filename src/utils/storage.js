@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════
-// WAXMA PRO — Storage & Business Logic
+// Wakhma PRO — Storage & Business Logic
 // ══════════════════════════════════════════════
 
 export const POINTS_PAR_REVELATION = 1500;  // Default cost per reveal
@@ -7,7 +7,7 @@ export const POINTS_REVELATION_KING = 1000;  // KING VIP pay 1000 per reveal
 export const KYC_INSCRIPTION_PRIX = 300;
 export const POINTS_KYC = 3000;
 export const DEMAND_LIMIT_PER_WEEK = 3;
-export const FREE_URL = 'https://waxma.lu';
+export const FREE_URL = 'https://wakhma-store.com';
 
 export const CATEGORIES_PRO = ["Téléphones", "TV Frigo Congélateur", "Clim Ventilateur"];
 
@@ -33,7 +33,7 @@ export function getRevealCost(role) {
 }
 
 // ── Vendor storage ──
-const VENDEUR_KEY = 'waxma_pro_vendeur';
+const VENDEUR_KEY = 'wakhma_pro_vendeur';
 
 export function getVendeur() {
   try { return JSON.parse(localStorage.getItem(VENDEUR_KEY) || 'null'); }
@@ -55,9 +55,9 @@ export function updateVendeurRole(phone, newRole) {
     setVendeur(v);
   }
   // Also update vendeurs list
-  const vendeurs = JSON.parse(localStorage.getItem('waxma_pro_vendeurs') || '[]');
+  const vendeurs = JSON.parse(localStorage.getItem('wakhma_pro_vendeurs') || '[]');
   const idx = vendeurs.findIndex(vv => vv.numero === phone);
-  if (idx >= 0) { vendeurs[idx].role = newRole; localStorage.setItem('waxma_pro_vendeurs', JSON.stringify(vendeurs)); }
+  if (idx >= 0) { vendeurs[idx].role = newRole; localStorage.setItem('wakhma_pro_vendeurs', JSON.stringify(vendeurs)); }
 }
 
 // ── Points ──
@@ -94,7 +94,7 @@ export function getRevealsFromPoints(phone, role) {
 }
 
 // ── Reveal tracking ──
-const REVEALS_KEY = 'waxma_pro_reveals';
+const REVEALS_KEY = 'wakhma_pro_reveals';
 
 export function getRevealsThisMonth(phone) {
   const reveals = JSON.parse(localStorage.getItem(REVEALS_KEY) || '[]');
@@ -118,7 +118,7 @@ export function getWeekKey() {
 }
 
 export function getWeeklyCount(phone) {
-  const key = `waxma_pro_weekly_${phone}_${getWeekKey()}`;
+  const key = `wakhma_pro_weekly_${phone}_${getWeekKey()}`;
   return parseInt(localStorage.getItem(key) || '0', 10);
 }
 
@@ -127,16 +127,16 @@ export function isLimitReached(phone) {
 }
 
 export function incrementWeeklyCount(phone) {
-  const key = `waxma_pro_weekly_${phone}_${getWeekKey()}`;
+  const key = `wakhma_pro_weekly_${phone}_${getWeekKey()}`;
   localStorage.setItem(key, String(getWeeklyCount(phone) + 1));
 }
 
 // ── Phone storage ──
-export function getStoredPhone() { return localStorage.getItem('waxma_pro_phone') || ''; }
-export function setStoredPhone(p) { localStorage.setItem('waxma_pro_phone', p); }
+export function getStoredPhone() { return localStorage.getItem('wakhma_pro_phone') || ''; }
+export function setStoredPhone(p) { localStorage.setItem('wakhma_pro_phone', p); }
 
 // ── Demand storage ──
-const DEMANDS_KEY = 'waxma_pro_demands';
+const DEMANDS_KEY = 'wakhma_pro_demands';
 
 export function saveDemandLocal(d) {
   const demands = getDemandsLocal();
@@ -181,5 +181,5 @@ export function generateId() {
 }
 
 export function generateRef() {
-  return 'WAX-' + Date.now().toString(36).toUpperCase();
+  return 'WKH-' + Date.now().toString(36).toUpperCase();
 }

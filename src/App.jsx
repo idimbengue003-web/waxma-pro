@@ -48,8 +48,8 @@ export default function App() {
     <HelmetProvider>
       <div className="min-h-screen flex flex-col bg-pro-primary">
         <Helmet>
-          <title>WAXMA PRO — Le marché rapide de Dakar</title>
-          <meta name="description" content="WAXMA PRO : révèle les numéros WhatsApp des clients à Dakar." />
+          <title>Wakhma PRO — Le marché rapide de Dakar</title>
+          <meta name="description" content="Wakhma PRO : révèle les numéros WhatsApp des clients à Dakar." />
         </Helmet>
         <Header />
         <main className="flex-1">{renderPage()}</main>

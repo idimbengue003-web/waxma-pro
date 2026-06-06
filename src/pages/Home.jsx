@@ -14,7 +14,7 @@ export default function Home({ onPosted }) {
             <span className="gradient-text">Révèle leurs numéros.</span>
           </h1>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto mb-10">
-            WAXMA PRO, le marché rapide de Dakar. Les acheteurs postent leurs besoins, tu révèles leurs WhatsApp et tu vends.
+            Wakhma PRO, le marché rapide de Dakar. Les acheteurs postent leurs besoins, tu révèles leurs WhatsApp et tu vends.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#/vendeur" className="bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold px-10 py-4 rounded-xl hover:shadow-xl hover:shadow-pro-highlight/20 transition-all text-lg animate-pulse-glow">
@@ -67,7 +67,7 @@ export default function Home({ onPosted }) {
       {/* Warning */}
       <section className="py-10 px-4 bg-red-50">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-lg font-bold text-red-700 mb-2">⚠️ WAXMA ne rembourse PAS les Points</p>
+          <p className="text-lg font-bold text-red-700 mb-2">⚠️ Wakhma ne rembourse PAS les Points</p>
           <p className="text-sm text-red-600">Vérifiez budget + quartier avant de révéler un numéro. Si le client n'est pas sérieux, c'est votre choix.</p>
         </div>
       </section>

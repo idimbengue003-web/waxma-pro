@@ -17,7 +17,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <div className={`font-extrabold text-xl px-4 py-2 rounded-xl tracking-tight ${
             isKing ? 'bg-pro-king-gold text-pro-king-dark' : 'bg-gradient-to-br from-pro-highlight to-emerald-600 text-white shadow-lg shadow-pro-highlight/20'
-          }`}>WAXMA</div>
+          }`}>Wakhma</div>
           <span className={`font-bold text-xs px-3 py-1 rounded-lg uppercase tracking-wider ${
             isKing ? 'text-pro-king-gold bg-pro-king-gold/10 border border-pro-king-gold/20' : 'text-pro-highlight bg-pro-highlight/10 border border-pro-highlight/20'
           }`}>PRO</span>
