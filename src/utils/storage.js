@@ -183,3 +183,31 @@ export function generateId() {
 export function generateRef() {
   return 'WKH-' + Date.now().toString(36).toUpperCase();
 }
+
+// ── Auth & Roles (Admin access) ──
+const AUTH_KEY = 'wakhma_pro_auth';
+const ADMIN_PASSWORD = 'wakhma2024';
+
+export function getAuthUser() {
+  try {
+    return JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
+  } catch { return null; }
+}
+
+export function isSiteAdmin() {
+  const user = getAuthUser();
+  return user && user.role === 'admin';
+}
+
+export function loginSiteAdmin(password) {
+  if (password === ADMIN_PASSWORD) {
+    const user = { role: 'admin', loggedIn: true, since: new Date().toISOString() };
+    localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+    return true;
+  }
+  return false;
+}
+
+export function logoutSiteAdmin() {
+  localStorage.removeItem(AUTH_KEY);
+}

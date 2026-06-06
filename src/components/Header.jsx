@@ -1,15 +1,23 @@
 import { useState } from 'react';
-import { getVendeur, getPoints, getRevealsFromPoints, getRevealCost, POINTS_PAR_REVELATION, POINTS_REVELATION_KING } from '../utils/storage';
+import { getVendeur, getPoints, getRevealsFromPoints, getRevealCost, getAuthUser, isSiteAdmin, logoutSiteAdmin, POINTS_PAR_REVELATION, POINTS_REVELATION_KING } from '../utils/storage';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const vendeur = getVendeur();
   const isKing = vendeur?.role === 'king';
+  const authUser = getAuthUser();
+  const showAdmin = authUser && authUser.role === 'admin';
 
   const phone = vendeur?.numero || '';
   const points = phone ? getPoints(phone) : 0;
   const revealsFromPoints = phone ? getRevealsFromPoints(phone, vendeur?.role || 'free') : 0;
-  const revealCost = vendeur ? getRevealCost(vendeur.role) : POINTS_PAR_REVEAL;
+  const revealCost = vendeur ? getRevealCost(vendeur.role) : POINTS_PAR_REVELATION;
+
+  const handleLogout = () => {
+    logoutSiteAdmin();
+    setMenuOpen(false);
+    window.location.hash = '#/';
+  };
 
   return (
     <header className={`sticky top-0 z-50 border-b ${isKing ? 'bg-pro-king-dark border-pro-king-gold/20' : 'bg-pro-primary/95 backdrop-blur-md border-pro-accent/20'}`}>
@@ -47,7 +55,14 @@ export default function Header() {
           ) : (
             <a href="#/vendeur" className="bg-gradient-to-r from-pro-blue to-blue-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm">Espace Vendeur</a>
           )}
-          <a href="#/admin" className={`text-xs ${isKing ? 'text-gray-500 hover:text-pro-king-gold' : 'text-gray-400 hover:text-white'}`}>Admin</a>
+          {showAdmin ? (
+            <>
+              <a href="#/admin" className={`font-bold text-sm px-4 py-2 rounded-xl ${isKing ? 'text-pro-king-gold bg-pro-king-gold/10 border border-pro-king-gold/20 hover:bg-pro-king-gold/20' : 'text-pro-highlight bg-pro-highlight/10 border border-pro-highlight/20 hover:bg-pro-highlight/20'} transition`}>ADMIN 🔒</a>
+              <button onClick={handleLogout} className={`text-xs hover:text-red-400 transition-colors ${isKing ? 'text-gray-500' : 'text-gray-400'}`}>Déconnexion</button>
+            </>
+          ) : (
+            <a href="#/login" className={`text-xs ${isKing ? 'text-gray-500 hover:text-pro-king-gold' : 'text-gray-400 hover:text-white'}`}>Se connecter</a>
+          )}
         </nav>
 
         {/* Mobile */}
@@ -105,6 +120,15 @@ export default function Header() {
               <a href="#/dashboard" onClick={() => setMenuOpen(false)} className="bg-gradient-to-r from-pro-highlight to-emerald-600 text-white font-bold py-3.5 px-5 rounded-xl text-center text-sm">Dashboard</a>
             ) : (
               <a href="#/vendeur" onClick={() => setMenuOpen(false)} className="bg-gradient-to-r from-pro-blue to-blue-600 text-white font-bold py-3.5 px-5 rounded-xl text-center text-sm">Espace Vendeur</a>
+            )}
+
+            {showAdmin ? (
+              <>
+                <a href="#/admin" onClick={() => setMenuOpen(false)} className={`font-bold py-3 px-5 rounded-xl text-sm ${isKing ? 'text-pro-king-gold bg-pro-king-gold/10 border border-pro-king-gold/20' : 'text-pro-highlight bg-pro-highlight/10 border border-pro-highlight/20'}`}>ADMIN 🔒</a>
+                <button onClick={handleLogout} className="text-red-400 font-medium py-3 px-5 rounded-xl hover:bg-red-500/10 transition text-sm text-left">Déconnexion</button>
+              </>
+            ) : (
+              <a href="#/login" onClick={() => setMenuOpen(false)} className={`py-3 px-5 rounded-xl text-sm ${isKing ? 'text-gray-500 hover:text-pro-king-gold' : 'text-gray-400 hover:text-white'}`}>Se connecter</a>
             )}
           </nav>
         </div>
